@@ -1,0 +1,190 @@
+---
+# playbooks/add-tags.yml
+
+# from: /Users/samaki/gdrive/netdevops/arista/throwaways/one-click-se-demos/demos/cvaas-cvaas-and-avd-demo--evpn-mlag/avd_inventory/playbooks/avd_create_tags.yml
+
+- name: Add topology tags
+  hosts: CV_TAGS
+  connection: local
+  gather_facts: false
+  vars:
+    CVP_TAGS:
+      - device: CA1-SPINE1
+        device_tags:
+          - name: topology_hint_Campus-Pod
+            value: Campus1
+          - name: topology_hint_type
+            value: spine
+          - name: topology_hint_Access-Pod
+            value: MDF
+          - name: topology_hint_rack
+            value: None
+      - device: CA1-SPINE2
+        device_tags:
+          - name: topology_hint_Campus-Pod
+            value: Campus1
+          - name: topology_hint_type
+            value: spine
+          - name: topology_hint_Access-Pod
+            value: MDF
+          - name: topology_hint_rack
+            value: None
+      - device: CA1-LEAF1A
+        device_tags:
+          - name: topology_hint_Campus-Pod
+            value: Campus1
+          - name: CA-Pod
+            value: CA1
+          - name: topology_hint_Access-Pod
+            value: IDF1
+          - name: topology_hint_rack
+            value: rack0
+          - name: topology_hint_type
+            value: leaf
+          - name: router_bgp.as
+            value: 65103
+          - name: router_bgp.router_id
+            value: 10.1.254.5
+          - name: mlag_configuration.peer_link
+            value: Port-Channel7
+          - name: NodeId
+            value: 3
+          - name: Vtep
+            value: "True"
+      - device: CA1-LEAF1B
+        device_tags:
+          - name: topology_hint_Campus-Pod
+            value: Campus1
+          - name: CA-Pod
+            value: CA1
+          - name: topology_hint_Access-Pod
+            value: IDF1
+          - name: topology_hint_rack
+            value: rack0
+          - name: topology_hint_type
+            value: leaf
+          - name: router_bgp.as
+            value: 65103
+          - name: router_bgp.router_id
+            value: 10.1.254.6
+          - name: mlag_configuration.peer_link
+            value: Port-Channel7
+          - name: NodeId
+            value: 4
+          - name: Vtep
+            value: "True"
+      - device: CA1-LEAF1C
+        device_tags:
+          - name: topology_hint_Campus-Pod
+            value: Campus1
+          - name: CA-Pod
+            value: CA1
+          - name: topology_hint_Access-Pod
+            value: IDF1
+          - name: topology_hint_rack
+            value: rack0
+          - name: topology_hint_type
+            value: Member-Leaf
+          - name: NodeId
+            value: 7
+      - device: CA1-LEAF2A
+        device_tags:
+          - name: topology_hint_Campus-Pod
+            value: Campus1
+          - name: CA-Pod
+            value: CA1
+          - name: topology_hint_Access-Pod
+            value: IDF2
+          - name: topology_hint_rack
+            value: rack0
+          - name: topology_hint_type
+            value: leaf
+          - name: router_bgp.as
+            value: 65105
+          - name: router_bgp.router_id
+            value: 10.1.254.7
+          - name: mlag_configuration.peer_link
+            value: Port-Channel7
+          - name: NodeId
+            value: 5
+          - name: Vtep
+            value: "True"
+      - device: CA1-LEAF2B
+        device_tags:
+          - name: topology_hint_Campus-Pod
+            value: Campus1
+          - name: CA-Pod
+            value: CA1
+          - name: topology_hint_Access-Pod
+            value: IDF2
+          - name: topology_hint_rack
+            value: rack0
+          - name: topology_hint_type
+            value: leaf
+          - name: router_bgp.as
+            value: 65105
+          - name: router_bgp.router_id
+            value: 10.1.254.7
+          - name: mlag_configuration.peer_link
+            value: Port-Channel7
+          - name: NodeId
+            value: 5
+          - name: Vtep
+            value: "True"
+      - device: CA2-SPINE1
+        device_tags:
+          - name: topology_hint_Campus-Pod
+            value: Campus2
+          - name: topology_hint_type
+            value: spine
+          - name: topology_hint_Access-Pod
+            value: MDF
+          - name: topology_hint_rack
+            value: None
+      - device: CA2-LEAF1A
+        device_tags:
+          - name: topology_hint_Campus-Pod
+            value: Campus2
+          - name: CA-Pod
+            value: CA2
+          - name: topology_hint_Access-Pod
+            value: IDF1
+          - name: topology_hint_rack
+            value: rack0
+          - name: topology_hint_type
+            value: leaf
+          - name: router_bgp.as
+            value: 65213
+          - name: router_bgp.router_id
+            value: 10.2.254.15
+          - name: NodeId
+            value: 13
+          - name: Vtep
+            value: "True"
+      - device: CA2-LEAF2A
+        device_tags:
+          - name: topology_hint_Campus-Pod
+            value: Campus2
+          - name: CA-Pod
+            value: CA2
+          - name: topology_hint_Access-Pod
+            value: IDF1
+          - name: topology_hint_rack
+            value: rack0
+          - name: topology_hint_type
+            value: leaf
+          - name: router_bgp.as
+            value: 65215
+          - name: router_bgp.router_id
+            value: 10.2.254.17
+          - name: NodeId
+            value: 15
+          - name: Vtep
+            value: "True"
+
+  tasks:
+    - name: "create tags"
+      arista.cvp.cv_tag_v3:
+        tags: "{{CVP_TAGS}}"
+        #mode: delete
+        mode: assign

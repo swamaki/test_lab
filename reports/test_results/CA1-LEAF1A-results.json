@@ -1,0 +1,572 @@
+[
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyBGPSpecificPeers",
+    "categories": [
+      "bgp"
+    ],
+    "description": "Verifies the health of specific BGP peer(s) for given address families.",
+    "result": "error",
+    "messages": [
+      "show bgp neighbors vrf all has failed: ConnectionError: BGP inactive"
+    ],
+    "custom_field": "BGP EVPN Peer: CA1-SPINE1 (IP: 10.1.255.1)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyBGPSpecificPeers",
+    "categories": [
+      "bgp"
+    ],
+    "description": "Verifies the health of specific BGP peer(s) for given address families.",
+    "result": "error",
+    "messages": [
+      "show bgp neighbors vrf all has failed: ConnectionError: BGP inactive"
+    ],
+    "custom_field": "BGP EVPN Peer: CA1-SPINE2 (IP: 10.1.255.2)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyBGPSpecificPeers",
+    "categories": [
+      "bgp"
+    ],
+    "description": "Verifies the health of specific BGP peer(s) for given address families.",
+    "result": "error",
+    "messages": [
+      "show bgp neighbors vrf all has failed: ConnectionError: BGP inactive"
+    ],
+    "custom_field": "BGP IPv4 Unicast Peer: CA1-LEAF1B (IP: 169.254.1.5)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyBGPSpecificPeers",
+    "categories": [
+      "bgp"
+    ],
+    "description": "Verifies the health of specific BGP peer(s) for given address families.",
+    "result": "error",
+    "messages": [
+      "show bgp neighbors vrf all has failed: ConnectionError: BGP inactive"
+    ],
+    "custom_field": "BGP IPv4 Unicast Peer: CA1-SPINE1 (IP: 10.255.255.8)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyBGPSpecificPeers",
+    "categories": [
+      "bgp"
+    ],
+    "description": "Verifies the health of specific BGP peer(s) for given address families.",
+    "result": "error",
+    "messages": [
+      "show bgp neighbors vrf all has failed: ConnectionError: BGP inactive"
+    ],
+    "custom_field": "BGP IPv4 Unicast Peer: CA1-SPINE2 (IP: 10.255.255.10)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyLLDPNeighbors",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.",
+    "result": "success",
+    "custom_field": "Local: Ethernet1 - Remote: CA1-SPINE1 Ethernet1"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyLLDPNeighbors",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.",
+    "result": "success",
+    "custom_field": "Local: Ethernet2 - Remote: CA1-SPINE2 Ethernet1"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyLLDPNeighbors",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.",
+    "result": "failure",
+    "messages": [
+      "Port: Ethernet7 Neighbor: CA1-LEAF1B Neighbor Port: Ethernet7 - Wrong LLDP neighbors: CA1-LEAF1AB/Ethernet7"
+    ],
+    "custom_field": "Local: Ethernet7 - Remote: CA1-LEAF1B Ethernet7"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyLLDPNeighbors",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Verifies the connection status of the specified LLDP (Link Layer Discovery Protocol) neighbors.",
+    "result": "failure",
+    "messages": [
+      "Port: Ethernet8 Neighbor: CA1-LEAF1B Neighbor Port: Ethernet8 - Wrong LLDP neighbors: CA1-LEAF1AB/Ethernet8"
+    ],
+    "custom_field": "Local: Ethernet8 - Remote: CA1-LEAF1B Ethernet8"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyReachability",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Test network reachability to one or many destination IP(s).",
+    "result": "failure",
+    "messages": [
+      "Ping command 'ping vrf default 10.1.254.5 source 10.1.254.5 size 100 repeat 1' failed with an unexpected message: 'ping: bind: Cannot assign requested address'"
+    ],
+    "custom_field": "Source: Loopback0 (IP: 10.1.254.5) - Destination: CA1-LEAF1A Loopback0 (IP: 10.1.254.5)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyReachability",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Test network reachability to one or many destination IP(s).",
+    "result": "failure",
+    "messages": [
+      "Ping command 'ping vrf default 10.1.254.6 source 10.1.254.5 size 100 repeat 1' failed with an unexpected message: 'ping: bind: Cannot assign requested address'"
+    ],
+    "custom_field": "Source: Loopback0 (IP: 10.1.254.5) - Destination: CA1-LEAF1B Loopback0 (IP: 10.1.254.6)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyReachability",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Test network reachability to one or many destination IP(s).",
+    "result": "failure",
+    "messages": [
+      "Ping command 'ping vrf default 10.1.255.1 source 10.1.254.5 size 100 repeat 1' failed with an unexpected message: 'ping: bind: Cannot assign requested address'"
+    ],
+    "custom_field": "Source: Loopback0 (IP: 10.1.254.5) - Destination: CA1-SPINE1 Loopback0 (IP: 10.1.255.1)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyReachability",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Test network reachability to one or many destination IP(s).",
+    "result": "failure",
+    "messages": [
+      "Ping command 'ping vrf default 10.1.255.2 source 10.1.254.5 size 100 repeat 1' failed with an unexpected message: 'ping: bind: Cannot assign requested address'"
+    ],
+    "custom_field": "Source: Loopback0 (IP: 10.1.254.5) - Destination: CA1-SPINE2 Loopback0 (IP: 10.1.255.2)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyReachability",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Test network reachability to one or many destination IP(s).",
+    "result": "failure",
+    "messages": [
+      "Ping command 'ping vrf default 10.255.255.8 source 10.255.255.9 size 100 repeat 1' failed with an unexpected message: 'ping: bind: Cannot assign requested address'"
+    ],
+    "custom_field": "Source: P2P Interface Ethernet1 (IP: 10.255.255.9) - Destination: CA1-SPINE1 Ethernet1 (IP: 10.255.255.8)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyReachability",
+    "categories": [
+      "connectivity"
+    ],
+    "description": "Test network reachability to one or many destination IP(s).",
+    "result": "failure",
+    "messages": [
+      "Ping command 'ping vrf default 10.255.255.10 source 10.255.255.11 size 100 repeat 1' failed with an unexpected message: 'ping: bind: Cannot assign requested address'"
+    ],
+    "custom_field": "Source: P2P Interface Ethernet2 (IP: 10.255.255.11) - Destination: CA1-SPINE2 Ethernet1 (IP: 10.255.255.10)"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyEnvironmentCooling",
+    "categories": [
+      "hardware"
+    ],
+    "description": "Verifies the status of power supply fans and all fan trays.",
+    "result": "skipped",
+    "messages": [
+      "VerifyEnvironmentCooling test is not supported on cEOSLab"
+    ],
+    "custom_field": "Accepted States: 'ok'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyEnvironmentPower",
+    "categories": [
+      "hardware"
+    ],
+    "description": "Verifies the power supplies state and input voltage.",
+    "result": "skipped",
+    "messages": [
+      "VerifyEnvironmentPower test is not supported on cEOSLab"
+    ],
+    "custom_field": "Accepted States: 'ok'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyTemperature",
+    "categories": [
+      "hardware"
+    ],
+    "description": "Verifies if the device temperature is within acceptable limits.",
+    "result": "skipped",
+    "messages": [
+      "VerifyTemperature test is not supported on cEOSLab"
+    ]
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyTransceiversManufacturers",
+    "categories": [
+      "hardware"
+    ],
+    "description": "Verifies if all the transceivers come from approved manufacturers.",
+    "result": "skipped",
+    "messages": [
+      "VerifyTransceiversManufacturers test is not supported on cEOSLab"
+    ],
+    "custom_field": "Accepted Manufacturers: 'Arista Networks', 'Arastra, Inc.', 'Not Present'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "success",
+    "custom_field": "Interface Ethernet1 - P2P_CA1-SPINE1_Ethernet1 = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "success",
+    "custom_field": "Interface Ethernet2 - P2P_CA1-SPINE2_Ethernet1 = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Ethernet6 - Not configured"
+    ],
+    "custom_field": "Interface Ethernet6 - HOST1 = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "success",
+    "custom_field": "Interface Ethernet7 - MLAG_CA1-LEAF1B_Ethernet7 = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "success",
+    "custom_field": "Interface Ethernet8 - MLAG_CA1-LEAF1B_Ethernet8 = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Ethernet9 - Not configured"
+    ],
+    "custom_field": "Interface Ethernet9 - CSR_Router_Test_Interface = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Loopback0 - Not configured"
+    ],
+    "custom_field": "Interface Loopback0 - ROUTER_ID = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Loopback1 - Not configured"
+    ],
+    "custom_field": "Interface Loopback1 - VXLAN_TUNNEL_SOURCE = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Loopback101 - Not configured"
+    ],
+    "custom_field": "Interface Loopback101 - DIAG_VRF_VRF_TENANT = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Port-Channel6 - Not configured"
+    ],
+    "custom_field": "Interface Port-Channel6 - HOST1_Po1 = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Port-Channel7 - Not configured"
+    ],
+    "custom_field": "Interface Port-Channel7 - MLAG_CA1-LEAF1B_Port-Channel7 = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Vlan110 - Not configured"
+    ],
+    "custom_field": "Interface Vlan110 - Data = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Vlan111 - Not configured"
+    ],
+    "custom_field": "Interface Vlan111 - Voice = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Vlan112 - Not configured"
+    ],
+    "custom_field": "Interface Vlan112 - Guest = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Vlan3100 - Not configured"
+    ],
+    "custom_field": "Interface Vlan3100 - MLAG_L3_VRF_VRF_TENANT = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Vlan4093 - Not configured"
+    ],
+    "custom_field": "Interface Vlan4093 - MLAG_L3 = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Vlan4094 - Not configured"
+    ],
+    "custom_field": "Interface Vlan4094 - MLAG = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyInterfacesStatus",
+    "categories": [
+      "interfaces"
+    ],
+    "description": "Verifies the operational states of specified interfaces to ensure they match expected configurations.",
+    "result": "failure",
+    "messages": [
+      "Vxlan1 - Not configured"
+    ],
+    "custom_field": "Interface Vxlan1 = 'up'"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyMlagStatus",
+    "categories": [
+      "mlag"
+    ],
+    "description": "Verifies the health status of the MLAG configuration.",
+    "result": "skipped",
+    "messages": [
+      "MLAG is disabled"
+    ]
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyRoutingProtocolModel",
+    "categories": [
+      "routing"
+    ],
+    "description": "Verifies the configured routing protocol model.",
+    "result": "success",
+    "custom_field": "Routing protocol model: multi-agent"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyRoutingTableEntry",
+    "categories": [
+      "routing"
+    ],
+    "description": "Verifies that the provided routes are present in the routing table of a specified VRF.",
+    "result": "failure",
+    "messages": [
+      "The following route(s) are missing from the routing table of VRF default: 10.1.253.5"
+    ],
+    "custom_field": "Route: 10.1.253.5 - Peer: CA1-LEAF1A"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyRoutingTableEntry",
+    "categories": [
+      "routing"
+    ],
+    "description": "Verifies that the provided routes are present in the routing table of a specified VRF.",
+    "result": "failure",
+    "messages": [
+      "The following route(s) are missing from the routing table of VRF default: 10.1.254.5"
+    ],
+    "custom_field": "Route: 10.1.254.5 - Peer: CA1-LEAF1A"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyRoutingTableEntry",
+    "categories": [
+      "routing"
+    ],
+    "description": "Verifies that the provided routes are present in the routing table of a specified VRF.",
+    "result": "failure",
+    "messages": [
+      "The following route(s) are missing from the routing table of VRF default: 10.1.254.6"
+    ],
+    "custom_field": "Route: 10.1.254.6 - Peer: CA1-LEAF1B"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyRoutingTableEntry",
+    "categories": [
+      "routing"
+    ],
+    "description": "Verifies that the provided routes are present in the routing table of a specified VRF.",
+    "result": "failure",
+    "messages": [
+      "The following route(s) are missing from the routing table of VRF default: 10.1.255.1"
+    ],
+    "custom_field": "Route: 10.1.255.1 - Peer: CA1-SPINE1"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyRoutingTableEntry",
+    "categories": [
+      "routing"
+    ],
+    "description": "Verifies that the provided routes are present in the routing table of a specified VRF.",
+    "result": "failure",
+    "messages": [
+      "The following route(s) are missing from the routing table of VRF default: 10.1.255.2"
+    ],
+    "custom_field": "Route: 10.1.255.2 - Peer: CA1-SPINE2"
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyNTP",
+    "categories": [
+      "system"
+    ],
+    "description": "Verifies if NTP is synchronised.",
+    "result": "failure",
+    "messages": [
+      "NTP status mismatch - Expected: synchronised Actual: NTP is disabled."
+    ]
+  },
+  {
+    "name": "CA1-LEAF1A",
+    "test": "VerifyReloadCause",
+    "categories": [
+      "system"
+    ],
+    "description": "Verifies the last reload cause of the device.",
+    "result": "success"
+  }
+]

@@ -1,0 +1,164 @@
+
+
+mgmt:
+  networks:
+    - name: dual_custom_net1
+      ipv4_subnet: 192.168.223.0/25
+    - name: dual_custom_net2
+      ipv4_subnet: 192.168.223.128/25
+
+# ------------------
+mgmt:
+  network: dual_custom_net1
+  ipv4-subnet: 192.168.223.0/25
+
+# -------------------
+# # working
+# mgmt:
+#   network: dual_custom_net
+#   bridge: mybridge
+#   ipv4-subnet: 192.168.223.0/24 
+#   ipv4-gw: 192.168.223.1 
+
+networks:
+  dual_custom_net1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.223.0/25
+
+  dual_custom_net2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.223.128/25
+
+  dataplane-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+topology:
+  nodes:
+    r1:
+      kind: linux
+      image: ghcr.io/hellt/network-multitool
+      mgmt-net: dual_custom_net1
+      networks:
+        dataplane-net:
+
+    r2:
+      kind: linux
+      image: ghcr.io/hellt/network-multitool
+      mgmt-net: dual_custom_net2
+      networks:
+        dataplane-net:
+
+    s1:
+      kind: linux
+      image: ghcr.io/hellt/network-multitool
+      mgmt-net: dual_custom_net1
+      networks:
+        dataplane-net:
+
+    s2:
+      kind: linux
+      image: ghcr.io/hellt/network-multitool
+      mgmt-net: dual_custom_net2
+      networks:
+        dataplane-net:
+
+-------------------
+chatgpt
+mgmt:
+  network: dual_custom_net1
+  ipv4-subnet: 192.168.223.0/25
+
+networks:
+  dual_custom_net1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.223.0/25
+
+  dual_custom_net2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.223.128/25
+
+-------------------
+gemini 
+mgmt:
+  network:
+    - name: dual_custom_net1
+      ipv4_subnet: 192.168.223.0/25
+      ipv4-gw: 192.168.223.1
+    - name: dual_custom_net2
+      ipv4_subnet: 192.168.223.128/25
+      ipv4-gw: 192.168.223.129
+
+
+topology:
+  networks:
+    dual_custom_net1:
+      kind: bridge
+      ipv4_subnet: 192.168.223.0/25
+    dual_custom_net2:
+      kind: bridge
+      ipv4_subnet: 192.168.223.128/25
+
+topology:
+  nodes:
+    router1:
+      kind: linux
+      image: alpine:latest
+      networks:
+        mgmt-net1:
+          ipv4: 192.168.100.10
+
+    router2:
+      kind: linux
+      image: alpine:latest
+      networks:
+        mgmt-net1:
+          ipv4: 192.168.100.11
+
+    switch1:
+      kind: linux
+      image: alpine:latest
+      networks:
+        mgmt-net2:
+          ipv4: 192.168.200.10
+
+    switch2:
+      kind: linux
+      image: alpine:latest
+      networks:
+        mgmt-net2:
+          ipv4: 192.168.200.11
+
+-------------------------------------
+
+mgmt:
+  network: custom_net
+  bridge: mybridge
+  ipv4-subnet: 192.168.223.0/24
+  ipv4-gw: 192.168.223.1
+
+---
+name: mgmt2
+prefix: clab
+version: 2
+
+# ---------------
+mgmt:
+  network: none  # Disable default management network
+
+networks:
+  mgmt-net1:
+    ipv4-subnet: 192.168.223.0/25
+  mgmt-net2:
+    ipv4-subnet: 192.168.223.128/25
+

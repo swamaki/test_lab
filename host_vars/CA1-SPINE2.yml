@@ -1,0 +1,35 @@
+---
+# host_vars/CA1-SPINE2.yml
+
+
+custom_structured_configuration_prefix:
+  - "csc_"
+
+csc_metadata:
+  platform: vEOS-lab
+  fabric_name: FABRIC
+  cv_tags:
+    device_tags:
+    - name: AVD-LEAF-ALIGN
+      value: LEFT
+    - name: AVD-ACC-POD
+      value: IDF1
+    - name: AVD-NODE-ID
+      value: "3"
+    interface_tags:
+      - interface: Ethernet1
+        tags:
+          - name: Circuit
+            value: True
+          - name: Vendor
+            value: Verizon
+          - name: CircuitID
+            value: "VZ-000101"
+      - interface: Ethernet2
+        tags:
+          - name: Circuit
+            value: True
+          - name: Vendor
+            value: Verizon
+          - name: CircuitID
+            value: "VZ-000102"

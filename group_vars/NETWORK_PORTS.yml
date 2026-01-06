@@ -1,0 +1,92 @@
+---
+### group_vars/NETWORK_PORTS.yml
+
+port_profiles:
+  - profile: PP-DOT1X
+    mode: "trunk phone"
+    spanning_tree_portfast: edge
+    spanning_tree_bpduguard: enabled
+    poe:
+      priority: critical
+      reboot:
+        action: maintain
+      link_down:
+        action: maintain
+      shutdown:
+        action: power-off
+      limit:
+        class: 4
+    dot1x:
+      port_control: auto
+      reauthentication: true
+      pae:
+        mode: authenticator
+      host_mode:
+        mode: multi-host
+        multi_host_authenticated: true
+      mac_based_authentication:
+        enabled: true
+      timeout:
+        idle_host: 300
+        quiet_period: 30
+        reauth_period: server
+        reauth_timeout_ignore: true
+        tx_period: 3
+      reauthorization_request_limit: 3
+      # authentication_failure:
+      #   action: "allow"
+      #   allow_vlan: 505
+
+network_ports:
+# ---------------- Hosts Interfaces ----------------
+
+  - switches:
+      - CA1-LEAF1[AB]
+    switch_ports:
+      - Ethernet6
+    port_channel:
+      mode: "active"
+      channel_id: 6
+      description: HOST1_Po1
+    endpoint: HOST1
+    mode: "access"
+    vlans: 110
+    spanning_tree_portfast: "edge"
+
+# ---------------- CSR Test Interfaces ----------------
+
+  - switches:
+      - CA1-LEAF1[A]
+    switch_ports:
+      - Ethernet9
+    description: CSR_Router_Test_Interface
+    mode: "access"
+    vlans: 111
+    spanning_tree_portfast: "edge"
+
+  - switches:
+      - CA1-LEAF1[B]
+    switch_ports:
+      - Ethernet9
+    description: CSR_Router_Test_Interface
+    mode: "access"
+    vlans: 112
+    spanning_tree_portfast: "edge"
+    
+# ---------------- CA1_IDF1 ----------------
+  - switches:
+      - CA1-LEAF1[AB] # regex match CA1-LEAF1A & CA1-LEAF1B
+    switch_ports:
+      # - Ethernet9-48
+    description: Campus1 IDF1 Standard Port
+    profile: PP-DOT1X
+    native_vlan: 110
+    structured_config:
+      switchport:
+        phone:
+          trunk: untagged
+          vlan: 111
+    dot1x:
+      authentication_failure:
+        action: allow
+        allow_vlan: 112

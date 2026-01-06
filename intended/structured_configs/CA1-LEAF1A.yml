@@ -1,0 +1,627 @@
+aaa_authentication:
+  policies:
+    local:
+      allow_nopassword: true
+aaa_authorization:
+  exec:
+    default: local
+aaa_root:
+  disabled: true
+aliases: "alias siib show ip interface brief\nalias cc clear counters\nalias cp clear platform trident counters \nalias senz show interface
+  counter error | nz \nalias snz show interface counter | nz \nalias sqnz show interface counter queue | nz \nalias srnz show interface
+  counter rate | nz\nalias shrte show ip route\nalias showcon show interfaces status | grep connected    \nalias sa show active \nalias
+  clrcounters clear counters\nalias wrtme write mem\nalias spc show port-channel %1 detail all   \nalias ports show int sta | grep \"connected\\|
+  disabled\" \nalias shmc show int | awk '/^[A-Z]/ { intf = $1 } /, address is/ { print intf, $6 }'\nalias term_logs sh agent TerminAttr
+  logs | tail\nalias spcd show port-channel dense\n"
+config_end: true
+daemon_terminattr:
+  cvaddrs:
+  - apiserver.cv-staging.corp.arista.io:443
+  cvauth:
+    method: token-secure
+    token_file: /tmp/cv-onboarding-token
+  cvsourceintf: Management0
+  cvvrf: MGMT
+  disable_aaa: true
+  ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
+  smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
+enable_password:
+  disabled: true
+eos_cli: '!
+
+  spanning-tree guard loop default
+
+  snmp-server location FABRIC RackYY
+
+  !
+
+  '
+ethernet_interfaces:
+- name: Ethernet7
+  description: MLAG_CA1-LEAF1B_Ethernet7
+  shutdown: false
+  channel_group:
+    id: 7
+    mode: active
+  peer: CA1-LEAF1B
+  peer_interface: Ethernet7
+  peer_type: mlag_peer
+- name: Ethernet8
+  description: MLAG_CA1-LEAF1B_Ethernet8
+  shutdown: false
+  channel_group:
+    id: 7
+    mode: active
+  peer: CA1-LEAF1B
+  peer_interface: Ethernet8
+  peer_type: mlag_peer
+- name: Ethernet1
+  description: P2P_CA1-SPINE1_Ethernet1
+  shutdown: false
+  mtu: 1500
+  ip_address: 10.255.255.9/31
+  peer: CA1-SPINE1
+  peer_interface: Ethernet1
+  peer_type: spine
+  switchport:
+    enabled: false
+- name: Ethernet2
+  description: P2P_CA1-SPINE2_Ethernet1
+  shutdown: false
+  mtu: 1500
+  ip_address: 10.255.255.11/31
+  peer: CA1-SPINE2
+  peer_interface: Ethernet1
+  peer_type: spine
+  switchport:
+    enabled: false
+- name: Ethernet6
+  description: HOST1
+  shutdown: false
+  channel_group:
+    id: 6
+    mode: active
+  peer: HOST1
+  peer_type: network_port
+- name: Ethernet9
+  description: CSR_Router_Test_Interface
+  shutdown: false
+  spanning_tree_portfast: edge
+  peer_type: network_port
+  switchport:
+    enabled: true
+    mode: access
+    access_vlan: 111
+hostname: CA1-LEAF1A
+ip_igmp_snooping:
+  globally_enabled: true
+ip_name_servers:
+- ip_address: 1.1.1.1
+  vrf: MGMT
+- ip_address: 8.8.8.8
+  vrf: MGMT
+ip_routing: true
+ip_virtual_router_mac_address: 00:1c:73:00:00:99
+local_users:
+- name: admin
+  privilege: 15
+  role: network-admin
+  no_password: true
+- name: ansible
+  privilege: 15
+  role: network-admin
+  sha512_password: $6$PSA4aPswd2HDdmSm$FqLt3zbElJ9b9tozHnWTarL3n2PJYHcTe82nnNVnNHS/YKYOpqVuQszgXkFcGnrfW0ox6fM/KkhTVKws4uYL4/
+- name: arista
+  privilege: 15
+  role: network-admin
+  sha512_password: $6$OlSQTjXHo7mmIW1I$6lZA3DU96STseOhmbuyRF8pRtFi50wBf7dbbPqjN6wJnPu4/cTDFL.pWerh4Jw26uCTGetW9M4IBKKxgzM/Oo1
+logging:
+  monitor: debugging
+loopback_interfaces:
+- name: Loopback0
+  description: ROUTER_ID
+  shutdown: false
+  ip_address: 10.1.254.5/32
+- name: Loopback1
+  description: VXLAN_TUNNEL_SOURCE
+  shutdown: false
+  ip_address: 10.1.253.5/32
+- name: Loopback101
+  description: DIAG_VRF_VRF_TENANT
+  shutdown: false
+  vrf: VRF_TENANT
+  ip_address: 10.1.101.5/32
+management_api_http:
+  enable_https: true
+  enable_vrfs:
+  - name: MGMT
+  - name: default
+management_interfaces:
+- name: Management0
+  description: OOB_MANAGEMENT
+  shutdown: false
+  vrf: MGMT
+  ip_address: 192.168.223.101/24
+  type: oob
+  gateway: 192.168.223.1
+metadata:
+  is_deployed: true
+  platform: vEOS-lab
+  fabric_name: FABRIC
+  cv_tags:
+    device_tags:
+    - name: topology_hint_fabric
+      value: FABRIC
+    - name: topology_hint_type
+      value: leaf
+    - name: topology_hint_rack
+      value: CA1_L3_LEAFS_IDF1
+    - name: AVD-CA-POD
+      value: Campus1
+    - name: AVD-BGP-ASN
+      value: '65103'
+    - name: AVD-BGP-ROUTERID
+      value: 10.1.254.5
+    - name: AVD-VTEP
+      value: 'True'
+    - name: AVD-MLAG-PEERLINK
+      value: Port-Channel7
+    - name: AVD-MLAG-TIMERS
+      value: MLAG-TIMERS
+    interface_tags:
+    - interface: Ethernet7
+      tags:
+      - name: AVD-PEER-TYPE
+        value: mlag_peer
+      - name: AVD-DESCRIPTION
+        value: MLAG_CA1-LEAF1B_Ethernet7
+    - interface: Ethernet8
+      tags:
+      - name: AVD-PEER-TYPE
+        value: mlag_peer
+      - name: AVD-DESCRIPTION
+        value: MLAG_CA1-LEAF1B_Ethernet8
+    - interface: Ethernet1
+      tags:
+      - name: AVD-PEER-TYPE
+        value: spine
+      - name: AVD-DESCRIPTION
+        value: P2P_CA1-SPINE1_Ethernet1
+    - interface: Ethernet2
+      tags:
+      - name: AVD-PEER-TYPE
+        value: spine
+      - name: AVD-DESCRIPTION
+        value: P2P_CA1-SPINE2_Ethernet1
+    - interface: Ethernet6
+      tags:
+      - name: AVD-PEER-TYPE
+        value: network_port
+      - name: AVD-DESCRIPTION
+        value: HOST1
+    - interface: Ethernet9
+      tags:
+      - name: AVD-PEER-TYPE
+        value: network_port
+      - name: AVD-DESCRIPTION
+        value: CSR_Router_Test_Interface
+mlag_configuration:
+  domain_id: CA1_L3_LEAFS_IDF1
+  local_interface: Vlan4094
+  peer_address: 169.254.0.5
+  peer_link: Port-Channel7
+  reload_delay_mlag: '300'
+  reload_delay_non_mlag: '330'
+ntp:
+  servers:
+  - name: time.google.com
+    iburst: true
+    preferred: true
+    vrf: MGMT
+port_channel_interfaces:
+- name: Port-Channel7
+  description: MLAG_CA1-LEAF1B_Port-Channel7
+  shutdown: false
+  switchport:
+    enabled: true
+    mode: trunk
+    trunk:
+      groups:
+      - MLAG
+- name: Port-Channel6
+  description: HOST1_Po1
+  shutdown: false
+  mlag: 6
+  spanning_tree_portfast: edge
+  switchport:
+    enabled: true
+    mode: access
+    access_vlan: 110
+prefix_lists:
+- name: PL-LOOPBACKS-EVPN-OVERLAY
+  sequence_numbers:
+  - sequence: 10
+    action: permit 10.1.254.0/24 eq 32
+  - sequence: 20
+    action: permit 10.1.253.0/24 eq 32
+- name: PL-MLAG-PEER-VRFS
+  sequence_numbers:
+  - sequence: 10
+    action: permit 169.254.1.4/31
+route_maps:
+- name: RM-MLAG-PEER-IN
+  sequence_numbers:
+  - sequence: 10
+    type: permit
+    description: Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal routing
+    set:
+    - origin incomplete
+- name: RM-CONN-2-BGP
+  sequence_numbers:
+  - sequence: 10
+    type: permit
+    match:
+    - ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+- name: RM-CONN-2-BGP-VRFS
+  sequence_numbers:
+  - sequence: 10
+    type: deny
+    match:
+    - ip address prefix-list PL-MLAG-PEER-VRFS
+  - sequence: 20
+    type: permit
+router_bfd:
+  multihop:
+    interval: 300
+    min_rx: 300
+    multiplier: 3
+router_bgp:
+  as: '65103'
+  router_id: 10.1.254.5
+  distance:
+    external_routes: 20
+    internal_routes: 200
+    local_routes: 200
+  graceful_restart:
+    enabled: true
+    restart_time: 300
+  maximum_paths:
+    paths: 4
+    ecmp: 4
+  bgp:
+    default:
+      ipv4_unicast: false
+  peer_groups:
+  - name: MLAG-IPv4-UNDERLAY-PEER
+    type: ipv4
+    remote_as: '65103'
+    description: CA1-LEAF1B
+    next_hop_self: true
+    password: 4b21pAdCvWeAqpcKDFMdWw==
+    send_community: all
+    maximum_routes: 12000
+    route_map_in: RM-MLAG-PEER-IN
+  - name: IPv4-UNDERLAY-PEERS
+    type: ipv4
+    password: 7x4B4rnJhZB438m9+BrBfQ==
+    send_community: all
+    maximum_routes: 12000
+  - name: EVPN-OVERLAY-PEERS
+    type: evpn
+    update_source: Loopback0
+    bfd: true
+    ebgp_multihop: 3
+    password: Q4fqtbqcZ7oQuKfuWtNGRQ==
+    send_community: all
+    maximum_routes: 0
+  neighbors:
+  - ip_address: 169.254.1.5
+    peer_group: MLAG-IPv4-UNDERLAY-PEER
+    peer: CA1-LEAF1B
+    description: CA1-LEAF1B_Vlan4093
+  - ip_address: 10.255.255.8
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '65100'
+    peer: CA1-SPINE1
+    description: CA1-SPINE1_Ethernet1
+  - ip_address: 10.255.255.10
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '65100'
+    peer: CA1-SPINE2
+    description: CA1-SPINE2_Ethernet1
+  - ip_address: 10.1.255.1
+    peer_group: EVPN-OVERLAY-PEERS
+    remote_as: '65100'
+    peer: CA1-SPINE1
+    description: CA1-SPINE1_Loopback0
+  - ip_address: 10.1.255.2
+    peer_group: EVPN-OVERLAY-PEERS
+    remote_as: '65100'
+    peer: CA1-SPINE2
+    description: CA1-SPINE2_Loopback0
+  redistribute:
+    connected:
+      enabled: true
+      route_map: RM-CONN-2-BGP
+  vlans:
+  - id: 110
+    tenant: TENANT1
+    rd: 10.1.254.5:10110
+    route_targets:
+      both:
+      - 10110:10110
+    redistribute_routes:
+    - learned
+  - id: 111
+    tenant: TENANT1
+    rd: 10.1.254.5:10111
+    route_targets:
+      both:
+      - 10111:10111
+    redistribute_routes:
+    - learned
+  - id: 112
+    tenant: TENANT1
+    rd: 10.1.254.5:10112
+    route_targets:
+      both:
+      - 10112:10112
+    redistribute_routes:
+    - learned
+  - id: 3401
+    tenant: TENANT1
+    rd: 10.1.254.5:13401
+    route_targets:
+      both:
+      - 13401:13401
+    redistribute_routes:
+    - learned
+  - id: 3402
+    tenant: TENANT1
+    rd: 10.1.254.5:13402
+    route_targets:
+      both:
+      - 13402:13402
+    redistribute_routes:
+    - learned
+  address_family_evpn:
+    peer_groups:
+    - name: EVPN-OVERLAY-PEERS
+      activate: true
+  address_family_ipv4:
+    peer_groups:
+    - name: MLAG-IPv4-UNDERLAY-PEER
+      activate: true
+    - name: IPv4-UNDERLAY-PEERS
+      activate: true
+    - name: EVPN-OVERLAY-PEERS
+      activate: false
+  vrfs:
+  - name: VRF_TENANT
+    rd: 10.1.254.5:101
+    route_targets:
+      import:
+      - address_family: evpn
+        route_targets:
+        - 101:101
+      export:
+      - address_family: evpn
+        route_targets:
+        - 101:101
+    router_id: 10.1.254.5
+    neighbors:
+    - ip_address: 169.254.1.5
+      peer_group: MLAG-IPv4-UNDERLAY-PEER
+      description: CA1-LEAF1B_Vlan3100
+    redistribute:
+      connected:
+        enabled: true
+        route_map: RM-CONN-2-BGP-VRFS
+serial_number: SN-CA1-LEAF1A
+service_routing_protocols_model: multi-agent
+sflow:
+  sample: 1000
+  polling_interval: 20
+  destinations:
+  - destination: 127.0.0.1
+  source_interface: Loopback0
+  run: true
+snmp_server:
+  engine_ids:
+    local: 2667d3cda8a6f9f7d054e1a9355541c28118888f
+  contact: snmp@arista.local
+  communities:
+  - name: ReadWrite$Password
+    access: rw
+    access_list_ipv4:
+      name: READWRITE_ACL
+  - name: ReadOnly$Password
+    access: ro
+    access_list_ipv4:
+      name: READONLY_ACL
+  groups:
+  - name: nettools
+    version: v3
+    authentication: priv
+  users:
+  - name: snmp_user1
+    group: nettools
+    version: v3
+    auth: sha
+    auth_passphrase: snmp_user1
+    priv: aes
+    priv_passphrase: snmp_user1
+  - name: snmp_user2
+    group: nettools
+    version: v3
+    auth: sha
+    auth_passphrase: snmp_user2
+    priv: aes
+    priv_passphrase: snmp_user2
+  hosts:
+  - host: 10.7.0.1
+    vrf: MGMT
+    version: 2c
+    community: ReadOnly$Password
+  - host: 10.7.0.2
+    vrf: MGMT
+    version: 2c
+    community: ReadOnly$Password
+    users:
+    - username: snmp_user1
+      authentication_level: auth
+  traps:
+    enable: true
+  vrfs:
+  - name: default
+    enable: false
+  - name: MGMT
+    enable: true
+spanning_tree:
+  mode: mstp
+  mst_instances:
+  - id: '0'
+    priority: 4096
+  no_spanning_tree_vlan: 4093-4094
+standard_access_lists:
+- name: READONLY_ACL
+  counters_per_entry: true
+  sequence_numbers:
+  - sequence: 10
+    action: permit 192.168.221.0/24
+  - sequence: 20
+    action: permit 192.168.222.0/24
+- name: READWRITE_ACL
+  counters_per_entry: true
+  sequence_numbers:
+  - sequence: 10
+    action: permit 192.168.223.0/24
+  - sequence: 20
+    action: permit 192.168.224.0/24
+static_routes:
+- vrf: MGMT
+  prefix: 0.0.0.0/0
+  next_hop: 192.168.223.1
+transceiver_qsfp_default_mode_4x10: true
+virtual_source_nat_vrfs:
+- name: VRF_TENANT
+  ip_address: 10.1.101.5
+vlan_interfaces:
+- name: Vlan4093
+  description: MLAG_L3
+  shutdown: false
+  ip_address: 169.254.1.4/31
+  mtu: 1500
+- name: Vlan4094
+  description: MLAG
+  shutdown: false
+  ip_address: 169.254.0.4/31
+  mtu: 1500
+  no_autostate: true
+- name: Vlan110
+  description: Data
+  shutdown: false
+  vrf: VRF_TENANT
+  ip_address_virtual: 10.1.10.1/24
+  ip_helpers:
+  - ip_helper: 10.0.0.1
+    source_interface: Loopback101
+    vrf: VRF_TENANT
+  tenant: TENANT1
+  tags:
+  - '110'
+- name: Vlan111
+  description: Voice
+  shutdown: false
+  vrf: VRF_TENANT
+  ip_address_virtual: 10.1.11.1/24
+  ip_helpers:
+  - ip_helper: 10.0.0.1
+    source_interface: Loopback101
+    vrf: VRF_TENANT
+  tenant: TENANT1
+  tags:
+  - '111'
+- name: Vlan112
+  description: Guest
+  shutdown: false
+  vrf: VRF_TENANT
+  ip_address_virtual: 10.1.12.1/24
+  ip_helpers:
+  - ip_helper: 10.0.0.1
+    source_interface: Loopback101
+    vrf: VRF_TENANT
+  tenant: TENANT1
+  tags:
+  - '112'
+- name: Vlan3100
+  description: MLAG_L3_VRF_VRF_TENANT
+  shutdown: false
+  vrf: VRF_TENANT
+  ip_address: 169.254.1.4/31
+  mtu: 1500
+  tenant: TENANT1
+  type: underlay_peering
+vlan_internal_order:
+  allocation: ascending
+  range:
+    beginning: 1006
+    ending: 1199
+vlans:
+- id: 4093
+  name: MLAG_L3
+  trunk_groups:
+  - MLAG
+  tenant: system
+- id: 4094
+  name: MLAG
+  trunk_groups:
+  - MLAG
+  tenant: system
+- id: 110
+  name: Data
+  tenant: TENANT1
+- id: 111
+  name: Voice
+  tenant: TENANT1
+- id: 112
+  name: Guest
+  tenant: TENANT1
+- id: 3100
+  name: MLAG_L3_VRF_VRF_TENANT
+  trunk_groups:
+  - MLAG
+  tenant: TENANT1
+- id: 3401
+  name: L2_VLAN3401
+  tenant: TENANT1
+- id: 3402
+  name: L2_VLAN3402
+  tenant: TENANT1
+vrfs:
+- name: MGMT
+  ip_routing: false
+- name: VRF_TENANT
+  ip_routing: true
+  tenant: TENANT1
+vxlan_interface:
+  vxlan1:
+    description: CA1-LEAF1A_VTEP
+    vxlan:
+      source_interface: Loopback1
+      udp_port: 4789
+      virtual_router_encapsulation_mac_address: mlag-system-id
+      vlans:
+      - id: 110
+        vni: 10110
+      - id: 111
+        vni: 10111
+      - id: 112
+        vni: 10112
+      - id: 3401
+        vni: 13401
+      - id: 3402
+        vni: 13402
+      vrfs:
+      - name: VRF_TENANT
+        vni: 101

@@ -1,0 +1,10 @@
+{
+  "name": "AVD Universal",
+  "image": "ghcr.io/aristanetworks/avd/universal:python3.12-avd-v5.7.0",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true
+    }
+  },
+  "postCreateCommand": "zsh -c '.devcontainer/post_create.sh && source ~/.zshrc'"
+}

@@ -1,0 +1,10 @@
+{
+  "vrfs": {
+    "default": {
+      "vrf": "default",
+      "routerId": "10.3.1.1",
+      "asn": "65000",
+      "peers": {}
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "vrfs": {
+    "default": {
+      "vrf": "default",
+      "routerId": "10.2.254.15",
+      "asn": "65213",
+      "peers": {
+        "10.2.255.11": {
+          "description": "CA2-SPINE1_Loopback0",
+          "version": 4,
+          "msgReceived": 179,
+          "msgSent": 56,
+          "inMsgQueue": 0,
+          "outMsgQueue": 0,
+          "asn": "65200",
+          "prefixAccepted": 86,
+          "prefixReceived": 86,
+          "upDownTime": 1748903443.96549,
+          "underMaintenance": false,
+          "peerState": "Established"
+        }
+      }
+    }
+  }
+}

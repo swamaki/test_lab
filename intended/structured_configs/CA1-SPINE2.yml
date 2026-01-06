@@ -1,0 +1,302 @@
+aaa_authentication:
+  policies:
+    local:
+      allow_nopassword: true
+aaa_authorization:
+  exec:
+    default: local
+aaa_root:
+  disabled: true
+aliases: "alias siib show ip interface brief\nalias cc clear counters\nalias cp clear platform trident counters \nalias senz show interface
+  counter error | nz \nalias snz show interface counter | nz \nalias sqnz show interface counter queue | nz \nalias srnz show interface
+  counter rate | nz\nalias shrte show ip route\nalias showcon show interfaces status | grep connected    \nalias sa show active \nalias
+  clrcounters clear counters\nalias wrtme write mem\nalias spc show port-channel %1 detail all   \nalias ports show int sta | grep \"connected\\|
+  disabled\" \nalias shmc show int | awk '/^[A-Z]/ { intf = $1 } /, address is/ { print intf, $6 }'\nalias term_logs sh agent TerminAttr
+  logs | tail\nalias spcd show port-channel dense\n"
+config_end: true
+daemon_terminattr:
+  cvaddrs:
+  - apiserver.cv-staging.corp.arista.io:443
+  cvauth:
+    method: token-secure
+    token_file: /tmp/cv-onboarding-token
+  cvsourceintf: Management0
+  cvvrf: MGMT
+  disable_aaa: true
+  ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
+  smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
+enable_password:
+  disabled: true
+eos_cli: '!
+
+  spanning-tree guard loop default
+
+  snmp-server location FABRIC RackYY
+
+  !
+
+  '
+ethernet_interfaces:
+- name: Ethernet1
+  description: P2P_CA1-LEAF1A_Ethernet2
+  shutdown: false
+  mtu: 1500
+  ip_address: 10.255.255.10/31
+  peer: CA1-LEAF1A
+  peer_interface: Ethernet2
+  peer_type: l3leaf
+  switchport:
+    enabled: false
+- name: Ethernet2
+  description: P2P_CA1-LEAF1B_Ethernet2
+  shutdown: false
+  mtu: 1500
+  ip_address: 10.255.255.14/31
+  peer: CA1-LEAF1B
+  peer_interface: Ethernet2
+  peer_type: l3leaf
+  switchport:
+    enabled: false
+hostname: CA1-SPINE2
+ip_name_servers:
+- ip_address: 1.1.1.1
+  vrf: MGMT
+- ip_address: 8.8.8.8
+  vrf: MGMT
+ip_routing: true
+local_users:
+- name: admin
+  privilege: 15
+  role: network-admin
+  no_password: true
+- name: ansible
+  privilege: 15
+  role: network-admin
+  sha512_password: $6$PSA4aPswd2HDdmSm$FqLt3zbElJ9b9tozHnWTarL3n2PJYHcTe82nnNVnNHS/YKYOpqVuQszgXkFcGnrfW0ox6fM/KkhTVKws4uYL4/
+- name: arista
+  privilege: 15
+  role: network-admin
+  sha512_password: $6$OlSQTjXHo7mmIW1I$6lZA3DU96STseOhmbuyRF8pRtFi50wBf7dbbPqjN6wJnPu4/cTDFL.pWerh4Jw26uCTGetW9M4IBKKxgzM/Oo1
+logging:
+  monitor: debugging
+loopback_interfaces:
+- name: Loopback0
+  description: ROUTER_ID
+  shutdown: false
+  ip_address: 10.1.255.2/32
+management_api_http:
+  enable_https: true
+  enable_vrfs:
+  - name: MGMT
+  - name: default
+management_interfaces:
+- name: Management0
+  description: OOB_MANAGEMENT
+  shutdown: false
+  vrf: MGMT
+  ip_address: 192.168.223.12/24
+  type: oob
+  gateway: 192.168.223.1
+metadata:
+  is_deployed: true
+  platform: vEOS-lab
+  fabric_name: FABRIC
+  cv_tags:
+    device_tags:
+    - name: topology_hint_fabric
+      value: FABRIC
+    - name: topology_hint_type
+      value: spine
+    - name: topology_hint_rack
+      value: CA1_SPINES
+    - name: AVD-CA-POD
+      value: Campus1
+    - name: AVD-ACC-POD
+      value: MDF
+    - name: AVD-BGP-ASN
+      value: '65100'
+    - name: AVD-BGP-ROUTERID
+      value: 10.1.255.2
+    - name: AVD-VTEP
+      value: 'False'
+    - name: AVD-MLAG-TIMERS
+      value: MLAG-TIMERS
+ntp:
+  servers:
+  - name: time.google.com
+    iburst: true
+    preferred: true
+    vrf: MGMT
+prefix_lists:
+- name: PL-LOOPBACKS-EVPN-OVERLAY
+  sequence_numbers:
+  - sequence: 10
+    action: permit 10.1.255.0/24 eq 32
+route_maps:
+- name: RM-CONN-2-BGP
+  sequence_numbers:
+  - sequence: 10
+    type: permit
+    match:
+    - ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+router_bfd:
+  multihop:
+    interval: 300
+    min_rx: 300
+    multiplier: 3
+router_bgp:
+  as: '65100'
+  router_id: 10.1.255.2
+  distance:
+    external_routes: 20
+    internal_routes: 200
+    local_routes: 200
+  graceful_restart:
+    enabled: true
+    restart_time: 300
+  maximum_paths:
+    paths: 4
+    ecmp: 4
+  bgp:
+    default:
+      ipv4_unicast: false
+  peer_groups:
+  - name: IPv4-UNDERLAY-PEERS
+    type: ipv4
+    password: 7x4B4rnJhZB438m9+BrBfQ==
+    send_community: all
+    maximum_routes: 12000
+  - name: EVPN-OVERLAY-PEERS
+    type: evpn
+    next_hop_unchanged: true
+    update_source: Loopback0
+    bfd: true
+    ebgp_multihop: 3
+    password: Q4fqtbqcZ7oQuKfuWtNGRQ==
+    send_community: all
+    maximum_routes: 0
+  neighbors:
+  - ip_address: 10.255.255.11
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '65103'
+    peer: CA1-LEAF1A
+    description: CA1-LEAF1A_Ethernet2
+  - ip_address: 10.255.255.15
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '65103'
+    peer: CA1-LEAF1B
+    description: CA1-LEAF1B_Ethernet2
+  - ip_address: 10.1.254.5
+    peer_group: EVPN-OVERLAY-PEERS
+    remote_as: '65103'
+    peer: CA1-LEAF1A
+    description: CA1-LEAF1A_Loopback0
+  - ip_address: 10.1.254.6
+    peer_group: EVPN-OVERLAY-PEERS
+    remote_as: '65103'
+    peer: CA1-LEAF1B
+    description: CA1-LEAF1B_Loopback0
+  redistribute:
+    connected:
+      enabled: true
+      route_map: RM-CONN-2-BGP
+  address_family_evpn:
+    peer_groups:
+    - name: EVPN-OVERLAY-PEERS
+      activate: true
+  address_family_ipv4:
+    peer_groups:
+    - name: IPv4-UNDERLAY-PEERS
+      activate: true
+    - name: EVPN-OVERLAY-PEERS
+      activate: false
+serial_number: SN-CA1-SPINE1
+service_routing_protocols_model: multi-agent
+sflow:
+  sample: 1000
+  polling_interval: 20
+  destinations:
+  - destination: 127.0.0.1
+  source_interface: Loopback0
+  run: true
+snmp_server:
+  engine_ids:
+    local: 9cab332d40cc992fd7511cb3ab7682e0801db855
+  contact: snmp@arista.local
+  communities:
+  - name: ReadWrite$Password
+    access: rw
+    access_list_ipv4:
+      name: READWRITE_ACL
+  - name: ReadOnly$Password
+    access: ro
+    access_list_ipv4:
+      name: READONLY_ACL
+  groups:
+  - name: nettools
+    version: v3
+    authentication: priv
+  users:
+  - name: snmp_user1
+    group: nettools
+    version: v3
+    auth: sha
+    auth_passphrase: snmp_user1
+    priv: aes
+    priv_passphrase: snmp_user1
+  - name: snmp_user2
+    group: nettools
+    version: v3
+    auth: sha
+    auth_passphrase: snmp_user2
+    priv: aes
+    priv_passphrase: snmp_user2
+  hosts:
+  - host: 10.7.0.1
+    vrf: MGMT
+    version: 2c
+    community: ReadOnly$Password
+  - host: 10.7.0.2
+    vrf: MGMT
+    version: 2c
+    community: ReadOnly$Password
+    users:
+    - username: snmp_user1
+      authentication_level: auth
+  traps:
+    enable: true
+  vrfs:
+  - name: default
+    enable: false
+  - name: MGMT
+    enable: true
+spanning_tree:
+  mode: none
+standard_access_lists:
+- name: READONLY_ACL
+  counters_per_entry: true
+  sequence_numbers:
+  - sequence: 10
+    action: permit 192.168.221.0/24
+  - sequence: 20
+    action: permit 192.168.222.0/24
+- name: READWRITE_ACL
+  counters_per_entry: true
+  sequence_numbers:
+  - sequence: 10
+    action: permit 192.168.223.0/24
+  - sequence: 20
+    action: permit 192.168.224.0/24
+static_routes:
+- vrf: MGMT
+  prefix: 0.0.0.0/0
+  next_hop: 192.168.223.1
+transceiver_qsfp_default_mode_4x10: true
+vlan_internal_order:
+  allocation: ascending
+  range:
+    beginning: 1006
+    ending: 1199
+vrfs:
+- name: MGMT
+  ip_routing: false

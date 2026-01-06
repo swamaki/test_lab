@@ -1,0 +1,179 @@
+---
+# Deploy these to simulate dual DCs with 2 different subnets
+
+- name: Build and Deploy Device configs
+  hosts: FABRIC
+  connection: local
+  gather_facts: false
+  vars:
+    ansible_connection: ansible.netcommon.httpapi
+    ansible_network_os: arista.eos.eos
+    ansible_user: ansible
+    ansible_password: ansible
+    ansible_become: true
+    ansible_become_method: enable
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: false
+    ansible_httpapi_ciphers: AES256-SHA:DHE-RSA-AES256-SHA:AES128-SHA:DHE-RSA-AES128-SHA
+
+  tasks:
+    - name: Backing up Device Configs via eos_config
+      tags:
+        - backup
+      arista.eos.eos_config:
+        backup: true
+        backup_options:
+          dir_path: "./device_bootstrap/backup"
+          filename: "{{ inventory_hostname }}.cfg"
+
+    - name: Deploy Configs via eos_config to clab
+      tags:
+        - deploy_clab_eosconfig
+      arista.eos.eos_config:
+        src: "../device_bootstrap/configs_clab/{{ inventory_hostname }}.cfg"
+        replace: "config"
+
+    - name: Deploy Configs via eos_config to ACT
+      tags:
+        - deploy_act_eosconfig
+      arista.eos.eos_config:
+        src: "../device_bootstrap/configs_act/{{ inventory_hostname }}.cfg"
+        replace: "config"
+
+    - name: Deploy Configs via eos_config to EVENG
+      tags:
+        - deploy_eve_eosconfig
+      arista.eos.eos_config:
+        src: "../device_bootstrap/configs_eve/{{ inventory_hostname }}.cfg"
+        replace: "config"
+
+    - name: Generate AVD Structured Configurations and Fabric Documentation
+      tags:
+        - build
+        - deploy_eapi
+        - validate
+      ansible.builtin.import_role:
+        name: arista.avd.eos_designs
+
+    - name: Generate Device Configurations and Documentation
+      tags:
+        - build
+        - deploy_eapi
+      ansible.builtin.import_role:
+        name: arista.avd.eos_cli_config_gen
+
+    - name: Deploy Configs via eAPI
+      tags:
+        - deploy_eapi
+      ansible.builtin.import_role:
+        name: arista.avd.eos_config_deploy_eapi
+
+    - name: Deploy configurations and tags to Cloudvision
+      tags:
+        - deploy_manifest
+      ansible.builtin.import_role:
+        name: arista.avd.cv_deploy
+      vars:
+        cv_server: www.cv-staging.corp.arista.io
+        cv_token: "{{lookup('file', '../../cv/cvaas.tok')}}"
+        cv_verify_certs: true
+        cv_configlet_name_template: "AVD_${hostname}"
+        # cv_run_change_control: true
+        cv_skip_missing_devices: true
+
+        # Skip devices and just run manifest of static configlets
+        cv_devices: []
+        cv_submit_workspace: false
+
+    - name: Deploy configurations and tags to Cloudvision
+      tags:
+        - deploy_cvaas
+      ansible.builtin.import_role:
+        name: arista.avd.cv_deploy
+      vars:
+        cv_server: www.cv-staging.corp.arista.io
+        cv_token: "{{lookup('file', '../../cv/cvaas.tok')}}"
+        cv_verify_certs: true
+        cv_configlet_name_template: "AVD_${hostname}"
+        # cv_run_change_control: true
+        # cv_skip_missing_devices: true
+
+    - name: Deploy configurations and tags to CloudVision in labs.arista
+      tags:
+        - deploy_cvaas_labs
+      ansible.builtin.import_role:
+        name: arista.avd.cv_deploy
+      vars:
+        cv_server: www.cv-staging.corp.arista.io
+        cv_token: "{{lookup('file', '../../cv/cvaas-labs-svc.tok')}}"
+        cv_verify_certs: true
+        cv_configlet_name_template: "AVD_${hostname}"
+        # cv_run_change_control: true
+        # cv_skip_missing_devices: true
+
+    - name: Deploy configurations and tags to CloudVision in ACT
+      tags:
+        - deploy_cv_act
+      ansible.builtin.import_role:
+        name: arista.avd.cv_deploy
+      vars:
+        cv_server: 10.18.144.223
+        cv_token: "{{lookup('file', '../../cv/cv-act.tok')}}"
+        cv_verify_certs: false
+        cv_configlet_name_template: "AVD_${hostname}"
+        # cv_run_change_control: true
+        # cv_skip_missing_devices: true
+
+    # - name: Validate Deployment via eos_validate_state
+    #   tags:
+    #     - validate
+    #   import_role:
+    #     name: arista.avd.eos_validate_state
+    #   vars:
+    #     save_catalog: true
+    #     # skip_tests:
+    #     #   - category: AvdTestNTP
+    #     #     tests:
+    #     #       - VerifyNTP
+
+    - name: Validate Deployment via ANTA
+      tags:
+        - validate
+        - anta
+      ansible.builtin.import_role:
+        name: arista.avd.anta_runner
+      vars:
+        # run or skip tests from the AVD-generated catalogs.
+        # These filters do not apply to user-defined catalogs, 'use anta_runner_tags' for user defined catalogs
+        avd_catalogs_filters:
+          - skip_tests: [VerifyNTP] # Skip VerifyNTP for all devices targeted by the run
+          - device_list: "{{ groups['CA1'] }}" # Skip VerifyReachability for all devices in the CA1 Ansible inventory group
+            skip_tests: [VerifyReachability, VerifyLoggingErrors]
+          - device_list: ["CA2-LEAF1A", "CA2-LEAF2A"] # Only run VerifyLLDPNeighbors for CA2-LEAF1A and CA2-LEAF2A
+            run_tests: [VerifyLLDPNeighbors]
+        avd_catalogs_allow_bgp_vrfs: true
+        # anta_report_hide_statuses: [ success, skipped ]
+        # avd_catalogs_enabled: false  # <-- Disable AVD-generated catalogs to use only user-defined catalogs
+        # anta_runner_tags: [ leaf ]   # <-- Only run tests tagged with 'leaf' on devices with 'leaf' tag
+
+# Digital Twin playbook to generate Digital Twin mode artifacts
+- name: Build Configurations and Documentation (DIGITAL TWIN)
+  hosts: FABRIC
+  gather_facts: false
+  vars:
+    # Adjust the output dirs to keep Digital Twin artifacts in a separate directory
+    output_dir_name: "digital_twin/intended"
+    documentation_dir_name: "digital_twin/documentation"
+    avd_digital_twin_mode: true
+  tasks:
+    - name: Generate AVD Structured Configurations and Fabric Documentation
+      tags:
+        - digital_twin
+      ansible.builtin.import_role:
+        name: arista.avd.eos_designs
+
+    - name: Generate Device Configurations and Documentation
+      tags:
+        - digital_twin
+      ansible.builtin.import_role:
+        name: arista.avd.eos_cli_config_gen
