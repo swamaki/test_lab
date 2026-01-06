@@ -1,54 +1,30 @@
 ---
 ### group_vars/CA1_SPINES.yml
 
-#------------------------------------------------------------
-########################### TAGs ############################
-#------------------------------------------------------------
-
-#  "leaf", "spine", "core", "edge" or "member-leaf". Defaults to the setting under node_type_keys.
-cv_tags_topology_type: spine
-
-generate_cv_tags:
-  topology_hints: true
-  campus_fabric: true
-  device_tags:
-    - name: AVD-CA-POD
-      value: Campus1
-    - name: AVD-ACC-POD
-      value: MDF
-    - name: AVD-BGP-ASN
-      data_path: router_bgp.as
-    - name: AVD-BGP-ROUTERID
-      data_path: router_bgp.router_id
-    - name: AVD-VTEP
-      value: "False"
-    - name: AVD-MLAG-PEERLINK
-      data_path: mlag_configuration.peer_link
-    - name: AVD-MLAG-TIMERS
-      value: MLAG-TIMERS
-
-#------------------------------------------------------------
-######################### NODE KEYS #########################
-#------------------------------------------------------------
-
-type: spine     # Must be either spine|l3spine
+type: l3spine     # Must be either spine|l3spine
 
 # Spine Switches
-spine:
+l3spine:
   defaults:
     platform: vEOS-lab
+    spanning_tree_mode: mstp
+    spanning_tree_priority: 4096
     loopback_ipv4_pool: 10.1.255.0/24
+    mlag_peer_ipv4_pool: 169.254.0.0/24
+    mlag_peer_l3_ipv4_pool: 169.254.1.0/24
+    mlag_interfaces: 
+      - Ethernet7
+      - Ethernet8
+    virtual_router_mac_address: 00:1c:73:00:dc:01
     bgp_as: 65100
-
   node_groups:
     - group: CA1_SPINES
-      
+      filter:
+        tags: [ "110", "111", "112" ]
       nodes:
         - name: CA1-SPINE1
           id: 1
           mgmt_ip: 192.168.223.11/24
-
         - name: CA1-SPINE2
           id: 2
           mgmt_ip: 192.168.223.12/24
-

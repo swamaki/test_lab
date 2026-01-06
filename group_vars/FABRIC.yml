@@ -165,4 +165,4 @@ csc_sflow:
 
 # Define underlay and overlay routing protocol to be used
 underlay_routing_protocol: ebgp
-overlay_routing_protocol: ebgp
+overlay_routing_protocol: none

@@ -37,33 +37,54 @@ eos_cli: '!
 
   '
 ethernet_interfaces:
-- name: Ethernet1
-  description: P2P_CA1-LEAF1A_Ethernet1
+- name: Ethernet7
+  description: MLAG_CA1-SPINE2_Ethernet7
   shutdown: false
-  mtu: 1500
-  ip_address: 10.255.255.8/31
+  channel_group:
+    id: 7
+    mode: active
+  peer: CA1-SPINE2
+  peer_interface: Ethernet7
+  peer_type: mlag_peer
+- name: Ethernet8
+  description: MLAG_CA1-SPINE2_Ethernet8
+  shutdown: false
+  channel_group:
+    id: 7
+    mode: active
+  peer: CA1-SPINE2
+  peer_interface: Ethernet8
+  peer_type: mlag_peer
+- name: Ethernet1
+  description: L2_CA1-LEAF1A_Ethernet1
+  shutdown: false
+  channel_group:
+    id: 1
+    mode: active
   peer: CA1-LEAF1A
   peer_interface: Ethernet1
-  peer_type: l3leaf
-  switchport:
-    enabled: false
+  peer_type: l2leaf
 - name: Ethernet2
-  description: P2P_CA1-LEAF1B_Ethernet1
+  description: L2_CA1-LEAF1B_Ethernet1
   shutdown: false
-  mtu: 1500
-  ip_address: 10.255.255.12/31
+  channel_group:
+    id: 1
+    mode: active
   peer: CA1-LEAF1B
   peer_interface: Ethernet1
-  peer_type: l3leaf
-  switchport:
-    enabled: false
+  peer_type: l2leaf
+- name: Ethernet10
+  description: Device Specific config
 hostname: CA1-SPINE1
+ip_igmp_snooping:
+  globally_enabled: true
 ip_name_servers:
 - ip_address: 1.1.1.1
   vrf: MGMT
 - ip_address: 8.8.8.8
   vrf: MGMT
 ip_routing: true
+ip_virtual_router_mac_address: 00:1c:73:00:dc:01
 local_users:
 - name: admin
   privilege: 15
@@ -101,49 +122,46 @@ metadata:
   is_deployed: true
   platform: vEOS-lab
   fabric_name: FABRIC
-  cv_tags:
-    device_tags:
-    - name: topology_hint_fabric
-      value: FABRIC
-    - name: topology_hint_type
-      value: spine
-    - name: topology_hint_rack
-      value: CA1_SPINES
-    - name: AVD-CA-POD
-      value: Campus1
-    - name: AVD-ACC-POD
-      value: MDF
-    - name: AVD-BGP-ASN
-      value: '65100'
-    - name: AVD-BGP-ROUTERID
-      value: 10.1.255.1
-    - name: AVD-VTEP
-      value: 'False'
-    - name: AVD-MLAG-TIMERS
-      value: MLAG-TIMERS
+mlag_configuration:
+  domain_id: CA1_SPINES
+  local_interface: Vlan4094
+  peer_address: 169.254.0.1
+  peer_link: Port-Channel7
+  reload_delay_mlag: '300'
+  reload_delay_non_mlag: '330'
 ntp:
   servers:
   - name: time.google.com
     iburst: true
     preferred: true
     vrf: MGMT
-prefix_lists:
-- name: PL-LOOPBACKS-EVPN-OVERLAY
-  sequence_numbers:
-  - sequence: 10
-    action: permit 10.1.255.0/24 eq 32
+port_channel_interfaces:
+- name: Port-Channel7
+  description: MLAG_CA1-SPINE2_Port-Channel7
+  shutdown: false
+  switchport:
+    enabled: true
+    mode: trunk
+    trunk:
+      groups:
+      - MLAG
+- name: Port-Channel1
+  description: L2_CA1_L3_LEAFS_IDF1_Port-Channel1
+  shutdown: false
+  mlag: 1
+  switchport:
+    enabled: true
+    mode: trunk
+    trunk:
+      allowed_vlan: 110-112,1000
 route_maps:
-- name: RM-CONN-2-BGP
+- name: RM-MLAG-PEER-IN
   sequence_numbers:
   - sequence: 10
     type: permit
-    match:
-    - ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY
-router_bfd:
-  multihop:
-    interval: 300
-    min_rx: 300
-    multiplier: 3
+    description: Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal routing
+    set:
+    - origin incomplete
 router_bgp:
   as: '65100'
   router_id: 10.1.255.1
@@ -161,55 +179,36 @@ router_bgp:
     default:
       ipv4_unicast: false
   peer_groups:
+  - name: MLAG-IPv4-UNDERLAY-PEER
+    type: ipv4
+    remote_as: '65100'
+    description: CA1-SPINE2
+    next_hop_self: true
+    password: 4b21pAdCvWeAqpcKDFMdWw==
+    send_community: all
+    maximum_routes: 12000
+    route_map_in: RM-MLAG-PEER-IN
   - name: IPv4-UNDERLAY-PEERS
     type: ipv4
     password: 7x4B4rnJhZB438m9+BrBfQ==
     send_community: all
     maximum_routes: 12000
-  - name: EVPN-OVERLAY-PEERS
-    type: evpn
-    next_hop_unchanged: true
-    update_source: Loopback0
-    bfd: true
-    ebgp_multihop: 3
-    password: Q4fqtbqcZ7oQuKfuWtNGRQ==
-    send_community: all
-    maximum_routes: 0
   neighbors:
-  - ip_address: 10.255.255.9
-    peer_group: IPv4-UNDERLAY-PEERS
-    remote_as: '65103'
-    peer: CA1-LEAF1A
-    description: CA1-LEAF1A_Ethernet1
-  - ip_address: 10.255.255.13
-    peer_group: IPv4-UNDERLAY-PEERS
-    remote_as: '65103'
-    peer: CA1-LEAF1B
-    description: CA1-LEAF1B_Ethernet1
-  - ip_address: 10.1.254.5
-    peer_group: EVPN-OVERLAY-PEERS
-    remote_as: '65103'
-    peer: CA1-LEAF1A
-    description: CA1-LEAF1A_Loopback0
-  - ip_address: 10.1.254.6
-    peer_group: EVPN-OVERLAY-PEERS
-    remote_as: '65103'
-    peer: CA1-LEAF1B
-    description: CA1-LEAF1B_Loopback0
+  - ip_address: 169.254.1.1
+    peer_group: MLAG-IPv4-UNDERLAY-PEER
+    peer: CA1-SPINE2
+    description: CA1-SPINE2_Vlan4093
   redistribute:
+    attached_host:
+      enabled: true
     connected:
       enabled: true
-      route_map: RM-CONN-2-BGP
-  address_family_evpn:
-    peer_groups:
-    - name: EVPN-OVERLAY-PEERS
-      activate: true
   address_family_ipv4:
     peer_groups:
+    - name: MLAG-IPv4-UNDERLAY-PEER
+      activate: true
     - name: IPv4-UNDERLAY-PEERS
       activate: true
-    - name: EVPN-OVERLAY-PEERS
-      activate: false
 serial_number: SN-CA1-SPINE1
 service_routing_protocols_model: multi-agent
 sflow:
@@ -271,7 +270,11 @@ snmp_server:
   - name: MGMT
     enable: true
 spanning_tree:
-  mode: none
+  mode: mstp
+  mst_instances:
+  - id: '0'
+    priority: 4096
+  no_spanning_tree_vlan: 4093-4094
 standard_access_lists:
 - name: READONLY_ACL
   counters_per_entry: true
@@ -292,11 +295,89 @@ static_routes:
   prefix: 0.0.0.0/0
   next_hop: 192.168.223.1
 transceiver_qsfp_default_mode_4x10: true
+vlan_interfaces:
+- name: Vlan4093
+  description: MLAG_L3
+  shutdown: false
+  ip_address: 169.254.1.0/31
+  mtu: 1500
+- name: Vlan4094
+  description: MLAG
+  shutdown: false
+  ip_address: 169.254.0.0/31
+  mtu: 1500
+  no_autostate: true
+- name: Vlan110
+  description: CA1-IDF1-Data
+  shutdown: false
+  ip_address: 10.1.10.2/24
+  ip_virtual_router_addresses:
+  - 10.1.10.1
+  ip_helpers:
+  - ip_helper: 10.0.0.1
+  tenant: TENANT1
+  tags:
+  - '110'
+- name: Vlan111
+  description: CA1-IDF1-Voice
+  shutdown: false
+  ip_address: 10.1.11.2/24
+  ip_virtual_router_addresses:
+  - 10.1.11.1
+  ip_helpers:
+  - ip_helper: 10.0.0.1
+  tenant: TENANT1
+  tags:
+  - '111'
+- name: Vlan112
+  description: CA1-IDF1-Guest
+  shutdown: false
+  ip_address: 10.1.12.2/24
+  ip_virtual_router_addresses:
+  - 10.1.12.1
+  ip_helpers:
+  - ip_helper: 10.0.0.1
+  tenant: TENANT1
+  tags:
+  - '112'
+- name: Vlan1000
+  description: Inband Management
+  shutdown: false
+  ip_address: 10.1.100.2/24
+  ip_virtual_router_addresses:
+  - 10.1.100.1
+  mtu: 1500
+  ip_attached_host_route_export:
+    enabled: true
+    distance: 19
 vlan_internal_order:
   allocation: ascending
   range:
     beginning: 1006
     ending: 1199
+vlans:
+- id: 4093
+  name: MLAG_L3
+  trunk_groups:
+  - MLAG
+  tenant: system
+- id: 4094
+  name: MLAG
+  trunk_groups:
+  - MLAG
+  tenant: system
+- id: 110
+  name: CA1-IDF1-Data
+  tenant: TENANT1
+- id: 111
+  name: CA1-IDF1-Voice
+  tenant: TENANT1
+- id: 112
+  name: CA1-IDF1-Guest
+  tenant: TENANT1
+- id: 1000
+  name: INBAND_MGMT
+  tenant: system
 vrfs:
 - name: MGMT
   ip_routing: false

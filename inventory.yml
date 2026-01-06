@@ -33,6 +33,7 @@ all:
     NETWORK_SERVICES:
       children:
         CA1_L3_LEAFS:
+        CA1_SPINES:
     L3EDGE_SERVICES:
       children:
         CA1_L3_LEAFS:
