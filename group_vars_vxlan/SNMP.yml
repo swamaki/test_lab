@@ -1,0 +1,143 @@
+---
+### group_vars/SNMP.yml
+
+custom_structured_configuration_prefix:
+  - "csc_"
+
+csc_standard_access_lists:
+  - name: READONLY_ACL
+    counters_per_entry: true
+    sequence_numbers:
+      - sequence: 10
+        action: "permit 192.168.221.0/24"
+      - sequence: 20
+        action: "permit 192.168.222.0/24"
+  - name: READWRITE_ACL
+    counters_per_entry: true
+    sequence_numbers:
+      - sequence: 10
+        action: "permit 192.168.223.0/24"
+      - sequence: 20
+        action: "permit 192.168.224.0/24"
+
+
+#------------------------------------------------------------
+####################### SNMP SETTINGS #######################
+#------------------------------------------------------------
+
+# https://avd.arista.com/5.7/ansible_collections/arista/avd/roles/eos_designs/docs/input-variables.html?h=snmp_sett#snmp-settings
+
+snmp_settings:
+  vrfs:
+    - name: "MGMT"
+      enable: true
+    - name: "default"
+      enable: false
+  compute_local_engineid: true
+  contact: "snmp@arista.local"
+  # location: true
+  groups:
+    - name: "nettools"
+      version: "v3"
+      authentication: "priv"
+  users:
+    - name: "snmp_user1"
+      group: "nettools"
+      version: "v3"
+      auth: "sha"
+      auth_passphrase: "snmp_user1"
+      priv: "aes"
+      priv_passphrase: "snmp_user1"
+    - name: "snmp_user2"
+      group: "nettools"
+      version: "v3"
+      auth: "sha"
+      auth_passphrase: "snmp_user2"
+      priv: "aes"
+      priv_passphrase: "snmp_user2"
+  communities:
+    - name: ReadWrite$Password
+      access: "rw"
+      access_list_ipv4:
+        name: READWRITE_ACL
+    - name: ReadOnly$Password
+      access: "ro"
+      access_list_ipv4:
+        name: READONLY_ACL
+  hosts:
+    - host: 10.7.0.1
+      vrf: MGMT
+      version: "2c"
+      community: ReadOnly$Password
+    - host: 10.7.0.2
+      vrf: MGMT
+      version: "2c"
+      community: ReadOnly$Password
+      users:
+        - username: snmp_user1
+          authentication_level: "auth"
+  traps:
+    enable: true # Enable or disable all snmp-traps.
+
+csc_eos_cli: |
+  !
+  spanning-tree guard loop default
+  snmp-server location FABRIC RackYY
+  !
+
+#------------------------------------------------------------
+######################## SNMP SERVER ########################
+#------------------------------------------------------------
+
+# # https://avd.arista.com/5.7/ansible_collections/arista/avd/roles/eos_cli_config_gen/docs/input-variables.html?h=snmp#snmp-server
+
+# csc_snmp_server:
+#   vrfs:
+#     - name: "MGMT"
+#       enable: true
+#     - name: "default"
+#       enable: false
+#   contact: "snmp@arista.local"
+#   location: "FABRIC RackXX"
+#   groups:
+#     - name: "nettools"
+#       version: "v3"
+#       authentication: "priv"
+#   users:
+#     - name: "snmp_user1"
+#       group: "nettools"
+#       version: "v3"
+#       auth: "sha"
+#       auth_passphrase: "snmp_user1"
+#       priv: "aes"
+#       priv_passphrase: "snmp_user1"
+#     - name: "snmp_user2"
+#       group: "nettools"
+#       version: "v3"
+#       auth: "sha"
+#       auth_passphrase: "snmp_user2"
+#       priv: "aes"
+#       priv_passphrase: "snmp_user2"
+#   communities:
+#     - name: ReadWrite$Password
+#       access: "rw"
+#       access_list_ipv4:
+#         name: READWRITE_ACL
+#     - name: ReadOnly$Password
+#       access: "ro"
+#       access_list_ipv4:
+#         name: READONLY_ACL
+#   hosts:
+#     - host: 10.7.0.1
+#       vrf: MGMT
+#       version: "2c"
+#       community: ReadOnly$Password
+#     - host: 10.7.0.2
+#       vrf: MGMT
+#       version: "2c"
+#       community: ReadOnly$Password
+#       users:
+#         - username: snmp_user1
+#           authentication_level: "auth"
+#   traps:
+#     enable: true # Enable or disable all snmp-traps.

@@ -14,7 +14,7 @@ all:
                   serial_number: SN-CA1-SPINE1
                 CA1-SPINE2:
                   ansible_host: 192.168.223.12
-                  serial_number: SN-CA1-SPINE1
+                  serial_number: SN-CA1-SPINE2
             CA1_L3_LEAFS:
               hosts:
                 CA1-LEAF1A:
@@ -24,30 +24,13 @@ all:
                   ansible_host: 192.168.223.102
                   serial_number: SN-CA1-LEAF1B
 
-    NETWORK_PORTS:
-      children:
-        CA1_L3_LEAFS:
-    LEAF_SERVICES:
+    CONNECTED_ENDPOINTS:
       children:
         CA1_L3_LEAFS:
     NETWORK_SERVICES:
       children:
         CA1_L3_LEAFS:
         CA1_SPINES:
-    L3EDGE_SERVICES:
-      children:
-        CA1_L3_LEAFS:
-        CA1_SPINES:
-    MULTICAST:
-      children:
-        CA1_L3_LEAFS:
-        CA1_SPINES:
-    MONITOR_CONNECTIVITY:
-      children:
-        CA1_L3_LEAFS:
-    MANIFEST:
-      children:
-        CA1:
     SNMP:
       children:
         CA1:

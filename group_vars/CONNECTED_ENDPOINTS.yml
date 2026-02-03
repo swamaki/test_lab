@@ -1,5 +1,5 @@
 ---
-### group_vars/NETWORK_PORTS.yml
+### group_vars/CONNECTED_ENDPOINTS.yml
 
 port_profiles:
   - profile: PP-DOT1X
@@ -37,21 +37,39 @@ port_profiles:
       #   action: "allow"
       #   allow_vlan: 505
 
-network_ports:
-# ---------------- Hosts Interfaces ----------------
+#------------------------------------------------------------
+###################### Network Ports ########################
+#------------------------------------------------------------
 
-  - switches:
-      - CA1-LEAF1[AB]
-    switch_ports:
-      - Ethernet6
-    port_channel:
-      mode: "active"
-      channel_id: 6
-      description: HOST1_Po1
-    endpoint: HOST1
-    mode: "access"
-    vlans: 110
-    spanning_tree_portfast: "edge"
+servers:
+
+# ----------------HOST1----------------
+
+  - name: HOST1
+    adapters:
+      - switch_ports:
+          - Ethernet6
+          - Ethernet6
+        switches:
+          - CA1-LEAF1A
+          - CA1-LEAF1B
+        endpoint_ports:
+          - Ethernet1
+          - Ethernet2
+        description: HOST1_Po1
+        mode: "access"
+        vlans: 110
+        spanning_tree_portfast: edge
+        port_channel:
+          description: HOST1_Po1
+          channel_id: 6
+          mode: active
+
+#------------------------------------------------------------
+####################### Campus Ports ########################
+#------------------------------------------------------------
+
+network_ports:
 
 # ---------------- CSR Test Interfaces ----------------
 
@@ -61,7 +79,7 @@ network_ports:
       - Ethernet9
     description: CSR_Router_Test_Interface
     mode: "access"
-    vlans: 111
+    vlans: 110
     spanning_tree_portfast: "edge"
 
   - switches:
@@ -70,14 +88,15 @@ network_ports:
       - Ethernet9
     description: CSR_Router_Test_Interface
     mode: "access"
-    vlans: 112
+    vlans: 111
     spanning_tree_portfast: "edge"
     
 # ---------------- CA1_IDF1 ----------------
+
   - switches:
       - CA1-LEAF1[AB] # regex match CA1-LEAF1A & CA1-LEAF1B
     switch_ports:
-      # - Ethernet9-48
+      # - Ethernet10-48
     description: Campus1 IDF1 Standard Port
     profile: PP-DOT1X
     native_vlan: 110

@@ -55,7 +55,7 @@ deploy_eve_eosconfig: ## Generating and Deploying Device Configs via eosconfig t
 .PHONY: deploy_clab_eosconfig
 deploy_clab_eosconfig: ## Generating and Deploying Device Configs via eosconfig to CLAB devices
 	@echo -e "$(HEADER_START)  Generating and Deploying Device Configs via eosconfig to CLAB devices $(HEADER_END)"
-	@ansible-playbook playbooks/deploy.yml --flush-cache --tags deploy_clab_eosconfig -i inventory_clab.yml
+	@ansible-playbook playbooks/deploy.yml --flush-cache --tags deploy_clab_eosconfig -i inventory.yml
 
 .PHONY: deploy_act_eosconfig
 deploy_act_eosconfig: ## Generating and Deploying Device Configs via eosconfig to ACT devices
@@ -74,7 +74,7 @@ deploy_eve_eapi: ## Generating and Deploying Device Configs via eAPI to EVENG de
 .PHONY: deploy_clab_eapi
 deploy_clab_eapi: ## Generating and Deploying Device Configs via eAPI to CLAB devices
 	@echo -e "$(HEADER_START) Generating and Deploying Device Configs via eAPI to CLAB devices $(HEADER_END)"
-	@ansible-playbook playbooks/deploy.yml --flush-cache --tags deploy_eapi -i inventory_clab.yml
+	@ansible-playbook playbooks/deploy.yml --flush-cache --tags deploy_eapi -i inventory.yml
 
 .PHONY: deploy_act_eapi
 deploy_act_eapi: ## Generating and Deploying Device Configs via eAPI to ACT devices
@@ -121,7 +121,7 @@ deploy_clab: ## Complete AVD & cEOS-Lab Deployment
 	@devcontainer up --workspace-folder .
 
 	@echo -e "$(HEADER_START) Generating and deploying switch configuration $(HEADER_END)"
-	@devcontainer exec --workspace-folder . ansible-playbook playbooks/deploy.yml --flush-cache --tags deploy_eapi -i inventory_clab.yml
+	@devcontainer exec --workspace-folder . ansible-playbook playbooks/deploy.yml --flush-cache --tags deploy_eapi -i inventory.yml
 	
 	@echo -e "$(HEADER_START) cEOS-Lab Topology $(HEADER_END)"
 	@sudo containerlab inspect -t topology.yml

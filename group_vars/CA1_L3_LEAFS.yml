@@ -1,6 +1,10 @@
 ---
 ### group_vars/CA1_L3_LEAFS.yml
 
+#------------------------------------------------------------
+######################### NODE KEYS #########################
+#------------------------------------------------------------
+
 type: l2leaf     # Must be leaf
 
 # IDF - Leaf Switches
@@ -42,3 +46,32 @@ l2leaf:
           uplink_switch_interfaces: 
             - Ethernet2
             - Ethernet2
+
+#------------------------------------------------------------
+########################### TAGs ############################
+#------------------------------------------------------------
+
+#  "leaf", "spine", "core", "edge" or "member-leaf". Defaults to the setting under node_type_keys.
+cv_tags_topology_type: leaf
+
+generate_cv_tags:
+  topology_hints: true
+  campus_fabric: true
+  device_tags:
+    - name: AVD-CA-POD
+      value: Campus1
+    - name: AVD-BGP-ASN
+      data_path: router_bgp.as
+    - name: AVD-BGP-ROUTERID
+      data_path: router_bgp.router_id
+    - name: AVD-VTEP
+      value: "True"
+    - name: AVD-MLAG-PEERLINK
+      data_path: mlag_configuration.peer_link
+    - name: AVD-MLAG-TIMERS
+      value: MLAG-TIMERS
+  interface_tags:
+    - name: AVD-PEER-TYPE
+      data_path: peer_type
+    - name: AVD-DESCRIPTION
+      data_path: description

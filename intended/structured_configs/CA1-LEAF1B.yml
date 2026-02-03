@@ -12,7 +12,12 @@ aliases: "alias siib show ip interface brief\nalias cc clear counters\nalias cp 
   counter rate | nz\nalias shrte show ip route\nalias showcon show interfaces status | grep connected    \nalias sa show active \nalias
   clrcounters clear counters\nalias wrtme write mem\nalias spc show port-channel %1 detail all   \nalias ports show int sta | grep \"connected\\|
   disabled\" \nalias shmc show int | awk '/^[A-Z]/ { intf = $1 } /, address is/ { print intf, $6 }'\nalias term_logs sh agent TerminAttr
-  logs | tail\nalias spcd show port-channel dense\n"
+  logs | tail\nalias spcd show port-channel dense\nalias sgr show mpls segment-routing bindings\nalias sbv show bgp vpn-ipv4 summary
+  \nalias sbe show bgp evpn summary\nalias ping1 bash /mnt/flash/ping_scripts/ping1.sh\nalias ping2 bash /mnt/flash/ping_scripts/ping2.sh\nalias
+  ping3 bash /mnt/flash/ping_scripts/ping3.sh\nalias rates show int eth1-8 counters rates\nalias ztpreset\n  10 delete flash:zerotouch-config\n
+  \ 20 write erase\n  30 reload now\n!\n"
+clock:
+  timezone: US/Eastern
 config_end: true
 daemon_terminattr:
   cvaddrs:
@@ -20,7 +25,6 @@ daemon_terminattr:
   cvauth:
     method: token-secure
     token_file: /tmp/cv-onboarding-token
-  cvsourceintf: Management0
   cvvrf: MGMT
   disable_aaa: true
   ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
@@ -74,13 +78,14 @@ ethernet_interfaces:
   peer_interface: Ethernet2
   peer_type: l3spine
 - name: Ethernet6
-  description: HOST1
+  description: HOST1_Po1
   shutdown: false
   channel_group:
     id: 6
     mode: active
   peer: HOST1
-  peer_type: network_port
+  peer_interface: Ethernet2
+  peer_type: server
 - name: Ethernet9
   description: CSR_Router_Test_Interface
   shutdown: false
@@ -89,9 +94,7 @@ ethernet_interfaces:
   switchport:
     enabled: true
     mode: access
-    access_vlan: 112
-- name: Ethernet10
-  description: Device Specific config
+    access_vlan: 111
 hostname: CA1-LEAF1B
 ip_igmp_snooping:
   globally_enabled: true
@@ -133,6 +136,81 @@ metadata:
   is_deployed: true
   platform: vEOS-lab
   fabric_name: FABRIC
+  cv_tags:
+    device_tags:
+    - name: topology_hint_fabric
+      value: FABRIC
+    - name: topology_hint_type
+      value: leaf
+    - name: topology_hint_rack
+      value: CA1_L3_LEAFS_IDF1
+    - name: AVD-CA-POD
+      value: Campus1
+    - name: AVD-VTEP
+      value: 'True'
+    - name: AVD-MLAG-PEERLINK
+      value: Port-Channel7
+    - name: AVD-MLAG-TIMERS
+      value: MLAG-TIMERS
+    - name: AVD-LEAF-ALIGN
+      value: RIGHT
+    - name: AVD-ACC-POD
+      value: IDF1
+    - name: AVD-NODE-ID
+      value: '4'
+    interface_tags:
+    - interface: Ethernet7
+      tags:
+      - name: AVD-PEER-TYPE
+        value: mlag_peer
+      - name: AVD-DESCRIPTION
+        value: MLAG_CA1-LEAF1A_Ethernet7
+    - interface: Ethernet8
+      tags:
+      - name: AVD-PEER-TYPE
+        value: mlag_peer
+      - name: AVD-DESCRIPTION
+        value: MLAG_CA1-LEAF1A_Ethernet8
+    - interface: Ethernet1
+      tags:
+      - name: AVD-PEER-TYPE
+        value: l3spine
+      - name: AVD-DESCRIPTION
+        value: L2_CA1-SPINE1_Ethernet2
+    - interface: Ethernet2
+      tags:
+      - name: AVD-PEER-TYPE
+        value: l3spine
+      - name: AVD-DESCRIPTION
+        value: L2_CA1-SPINE2_Ethernet2
+    - interface: Ethernet6
+      tags:
+      - name: AVD-PEER-TYPE
+        value: server
+      - name: AVD-DESCRIPTION
+        value: HOST1_Po1
+    - interface: Ethernet9
+      tags:
+      - name: AVD-PEER-TYPE
+        value: network_port
+      - name: AVD-DESCRIPTION
+        value: CSR_Router_Test_Interface
+    - interface: Ethernet1
+      tags:
+      - name: Circuit
+        value: 'True'
+      - name: Vendor
+        value: ATT
+      - name: CircuitID
+        value: ATT-000102
+    - interface: Ethernet2
+      tags:
+      - name: Circuit
+        value: 'True'
+      - name: Vendor
+        value: Verizon
+      - name: CircuitID
+        value: VZ-000102
 mlag_configuration:
   domain_id: CA1_L3_LEAFS_IDF1
   local_interface: Vlan4094

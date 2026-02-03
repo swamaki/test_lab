@@ -1,0 +1,10 @@
+anta_inventory:
+  hosts:
+  - host: 192.168.223.11
+    name: CA1-SPINE1
+  - host: 192.168.223.12
+    name: CA1-SPINE2
+  - host: 192.168.223.101
+    name: CA1-LEAF1A
+  - host: 192.168.223.102
+    name: CA1-LEAF1B

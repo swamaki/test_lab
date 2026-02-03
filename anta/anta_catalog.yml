@@ -1,0 +1,1158 @@
+---
+anta.tests.software:
+  - VerifyEOSVersion:
+      # Verifies the EOS version of the device.
+      versions:
+        - 4.33.2F
+        - 4.32.5M
+        - 4.34.3M-44102239.4343M (engineering build)
+
+anta.tests.system:
+- VerifyNTP:
+- VerifyReloadCause:
+- VerifyUptime:
+    minimum: 10
+- VerifyCoredump: {}
+- VerifyAgentLogs: {}
+- VerifyCPUUtilization: {}
+
+
+anta.tests.configuration:
+- VerifyZeroTouch: {}
+- VerifyRunningConfigDiffs: {}
+
+# anta.tests.bfd:
+#   - VerifyBFDPeersHealth:
+#       down_threshold: 2
+
+
+anta.tests.mlag:
+  - VerifyMlagConfigSanity:
+  - VerifyMlagInterfaces:
+  - VerifyMlagStatus:
+      # filters:
+      #   tags:
+      #   - leaf
+  - VerifyMlagReloadDelay:
+      reload_delay: 300
+      reload_delay_non_mlag: 330
+
+anta.tests.security:
+  - VerifyAPIHttpStatus:              #Verifies if eAPI HTTP server is disabled globally.
+  # - VerifyAPIHttpsSSL:                #Verifies if eAPI HTTPS server SSL profile is configured and valid.
+  #     profile: default
+  - VerifyAPISSLCertificate:          #Verifies the eAPI SSL certificate expiry, common subject name, encryption algorithm and key size.
+      certificates:
+        - certificate_name: ARISTA_SIGNING_CA.crt
+          expiry_threshold: 30
+          common_name: AristaIT-ICA ECDSA Issuing Cert Authority
+          encryption_algorithm: ECDSA
+          key_size: 256
+        - certificate_name: ARISTA_ROOT_CA.crt
+          expiry_threshold: 30
+          common_name: Arista Networks Internal IT Root Cert Authority
+          encryption_algorithm: RSA
+          key_size: 4096
+
+
+#--------------------------------------------------------
+
+# from merged
+
+anta.tests.connectivity:
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-SPINE1
+    neighbors:
+    - neighbor_device: CA1-LEAF1A
+      neighbor_port: Ethernet1
+      port: Ethernet1
+    result_overwrite:
+      custom_field: 'Local: Ethernet1 - Remote: CA1-LEAF1A Ethernet1'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-SPINE1
+    neighbors:
+    - neighbor_device: CA1-LEAF1B
+      neighbor_port: Ethernet1
+      port: Ethernet2
+    result_overwrite:
+      custom_field: 'Local: Ethernet2 - Remote: CA1-LEAF1B Ethernet1'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-SPINE1
+    hosts:
+    - destination: 10.255.255.9
+      repeat: 1
+      source: 10.255.255.8
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: P2P Interface Ethernet1 (IP: 10.255.255.8) - Destination: CA1-LEAF1A Ethernet1 (IP: 10.255.255.9)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-SPINE1
+    hosts:
+    - destination: 10.255.255.13
+      repeat: 1
+      source: 10.255.255.12
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: P2P Interface Ethernet2 (IP: 10.255.255.12) - Destination: CA1-LEAF1B Ethernet1 (IP: 10.255.255.13)'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-SPINE2
+    neighbors:
+    - neighbor_device: CA1-LEAF1A
+      neighbor_port: Ethernet2
+      port: Ethernet1
+    result_overwrite:
+      custom_field: 'Local: Ethernet1 - Remote: CA1-LEAF1A Ethernet2'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-SPINE2
+    neighbors:
+    - neighbor_device: CA1-LEAF1B
+      neighbor_port: Ethernet2
+      port: Ethernet2
+    result_overwrite:
+      custom_field: 'Local: Ethernet2 - Remote: CA1-LEAF1B Ethernet2'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-SPINE2
+    hosts:
+    - destination: 10.255.255.11
+      repeat: 1
+      source: 10.255.255.10
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: P2P Interface Ethernet1 (IP: 10.255.255.10) - Destination: CA1-LEAF1A Ethernet2 (IP: 10.255.255.11)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-SPINE2
+    hosts:
+    - destination: 10.255.255.15
+      repeat: 1
+      source: 10.255.255.14
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: P2P Interface Ethernet2 (IP: 10.255.255.14) - Destination: CA1-LEAF1B Ethernet2 (IP: 10.255.255.15)'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    neighbors:
+    - neighbor_device: CA1-LEAF1B
+      neighbor_port: Ethernet7
+      port: Ethernet7
+    result_overwrite:
+      custom_field: 'Local: Ethernet7 - Remote: CA1-LEAF1B Ethernet7'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    neighbors:
+    - neighbor_device: CA1-LEAF1B
+      neighbor_port: Ethernet8
+      port: Ethernet8
+    result_overwrite:
+      custom_field: 'Local: Ethernet8 - Remote: CA1-LEAF1B Ethernet8'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    neighbors:
+    - neighbor_device: CA1-SPINE1
+      neighbor_port: Ethernet1
+      port: Ethernet1
+    result_overwrite:
+      custom_field: 'Local: Ethernet1 - Remote: CA1-SPINE1 Ethernet1'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    neighbors:
+    - neighbor_device: CA1-SPINE2
+      neighbor_port: Ethernet1
+      port: Ethernet2
+    result_overwrite:
+      custom_field: 'Local: Ethernet2 - Remote: CA1-SPINE2 Ethernet1'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    hosts:
+    - destination: 10.255.255.8
+      repeat: 1
+      source: 10.255.255.9
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: P2P Interface Ethernet1 (IP: 10.255.255.9) - Destination: CA1-SPINE1 Ethernet1 (IP: 10.255.255.8)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    hosts:
+    - destination: 10.255.255.10
+      repeat: 1
+      source: 10.255.255.11
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: P2P Interface Ethernet2 (IP: 10.255.255.11) - Destination: CA1-SPINE2 Ethernet1 (IP: 10.255.255.10)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    hosts:
+    - destination: 10.1.255.1
+      repeat: 1
+      source: 10.1.254.5
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: Loopback0 (IP: 10.1.254.5) - Destination: CA1-SPINE1 Loopback0 (IP: 10.1.255.1)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    hosts:
+    - destination: 10.1.255.2
+      repeat: 1
+      source: 10.1.254.5
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: Loopback0 (IP: 10.1.254.5) - Destination: CA1-SPINE2 Loopback0 (IP: 10.1.255.2)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    hosts:
+    - destination: 10.1.254.5
+      repeat: 1
+      source: 10.1.254.5
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: Loopback0 (IP: 10.1.254.5) - Destination: CA1-LEAF1A Loopback0 (IP: 10.1.254.5)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    hosts:
+    - destination: 10.1.254.6
+      repeat: 1
+      source: 10.1.254.5
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: Loopback0 (IP: 10.1.254.5) - Destination: CA1-LEAF1B Loopback0 (IP: 10.1.254.6)'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    neighbors:
+    - neighbor_device: CA1-LEAF1A
+      neighbor_port: Ethernet7
+      port: Ethernet7
+    result_overwrite:
+      custom_field: 'Local: Ethernet7 - Remote: CA1-LEAF1A Ethernet7'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    neighbors:
+    - neighbor_device: CA1-LEAF1A
+      neighbor_port: Ethernet8
+      port: Ethernet8
+    result_overwrite:
+      custom_field: 'Local: Ethernet8 - Remote: CA1-LEAF1A Ethernet8'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    neighbors:
+    - neighbor_device: CA1-SPINE1
+      neighbor_port: Ethernet2
+      port: Ethernet1
+    result_overwrite:
+      custom_field: 'Local: Ethernet1 - Remote: CA1-SPINE1 Ethernet2'
+- VerifyLLDPNeighbors:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    neighbors:
+    - neighbor_device: CA1-SPINE2
+      neighbor_port: Ethernet2
+      port: Ethernet2
+    result_overwrite:
+      custom_field: 'Local: Ethernet2 - Remote: CA1-SPINE2 Ethernet2'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    hosts:
+    - destination: 10.255.255.12
+      repeat: 1
+      source: 10.255.255.13
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: P2P Interface Ethernet1 (IP: 10.255.255.13) - Destination: CA1-SPINE1 Ethernet2 (IP: 10.255.255.12)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    hosts:
+    - destination: 10.255.255.14
+      repeat: 1
+      source: 10.255.255.15
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: P2P Interface Ethernet2 (IP: 10.255.255.15) - Destination: CA1-SPINE2 Ethernet2 (IP: 10.255.255.14)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    hosts:
+    - destination: 10.1.255.1
+      repeat: 1
+      source: 10.1.254.6
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: Loopback0 (IP: 10.1.254.6) - Destination: CA1-SPINE1 Loopback0 (IP: 10.1.255.1)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    hosts:
+    - destination: 10.1.255.2
+      repeat: 1
+      source: 10.1.254.6
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: Loopback0 (IP: 10.1.254.6) - Destination: CA1-SPINE2 Loopback0 (IP: 10.1.255.2)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    hosts:
+    - destination: 10.1.254.5
+      repeat: 1
+      source: 10.1.254.6
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: Loopback0 (IP: 10.1.254.6) - Destination: CA1-LEAF1A Loopback0 (IP: 10.1.254.5)'
+- VerifyReachability:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    hosts:
+    - destination: 10.1.254.6
+      repeat: 1
+      source: 10.1.254.6
+      vrf: default
+    result_overwrite:
+      custom_field: 'Source: Loopback0 (IP: 10.1.254.6) - Destination: CA1-LEAF1B Loopback0 (IP: 10.1.254.6)'
+anta.tests.hardware:
+- VerifyEnvironmentPower:
+    filters:
+      tags:
+      - CA1-SPINE1
+    result_overwrite:
+      custom_field: 'Accepted States: ''ok'''
+    states:
+    - ok
+- VerifyEnvironmentCooling:
+    filters:
+      tags:
+      - CA1-SPINE1
+    result_overwrite:
+      custom_field: 'Accepted States: ''ok'''
+    states:
+    - ok
+- VerifyTemperature:
+    filters:
+      tags:
+      - CA1-SPINE1
+- VerifyTransceiversManufacturers:
+    filters:
+      tags:
+      - CA1-SPINE1
+    manufacturers:
+    - Arista Networks
+    - Arastra, Inc.
+    - Not Present
+    result_overwrite:
+      custom_field: 'Accepted Manufacturers: ''Arista Networks'', ''Arastra, Inc.'', ''Not Present'''
+- VerifyEnvironmentPower:
+    filters:
+      tags:
+      - CA1-SPINE2
+    result_overwrite:
+      custom_field: 'Accepted States: ''ok'''
+    states:
+    - ok
+- VerifyEnvironmentCooling:
+    filters:
+      tags:
+      - CA1-SPINE2
+    result_overwrite:
+      custom_field: 'Accepted States: ''ok'''
+    states:
+    - ok
+- VerifyTemperature:
+    filters:
+      tags:
+      - CA1-SPINE2
+- VerifyTransceiversManufacturers:
+    filters:
+      tags:
+      - CA1-SPINE2
+    manufacturers:
+    - Arista Networks
+    - Arastra, Inc.
+    - Not Present
+    result_overwrite:
+      custom_field: 'Accepted Manufacturers: ''Arista Networks'', ''Arastra, Inc.'', ''Not Present'''
+- VerifyEnvironmentPower:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'Accepted States: ''ok'''
+    states:
+    - ok
+- VerifyEnvironmentCooling:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'Accepted States: ''ok'''
+    states:
+    - ok
+- VerifyTemperature:
+    filters:
+      tags:
+      - CA1-LEAF1A
+- VerifyTransceiversManufacturers:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    manufacturers:
+    - Arista Networks
+    - Arastra, Inc.
+    - Not Present
+    result_overwrite:
+      custom_field: 'Accepted Manufacturers: ''Arista Networks'', ''Arastra, Inc.'', ''Not Present'''
+- VerifyEnvironmentPower:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'Accepted States: ''ok'''
+    states:
+    - ok
+- VerifyEnvironmentCooling:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'Accepted States: ''ok'''
+    states:
+    - ok
+- VerifyTemperature:
+    filters:
+      tags:
+      - CA1-LEAF1B
+- VerifyTransceiversManufacturers:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    manufacturers:
+    - Arista Networks
+    - Arastra, Inc.
+    - Not Present
+    result_overwrite:
+      custom_field: 'Accepted Manufacturers: ''Arista Networks'', ''Arastra, Inc.'', ''Not Present'''
+anta.tests.interfaces:
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-SPINE1
+    interfaces:
+    - name: Ethernet1
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet1 - P2P_CA1-LEAF1A_Ethernet1 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-SPINE1
+    interfaces:
+    - name: Ethernet2
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet2 - P2P_CA1-LEAF1B_Ethernet1 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-SPINE1
+    interfaces:
+    - name: Loopback0
+      status: up
+    result_overwrite:
+      custom_field: Interface Loopback0 - ROUTER_ID = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-SPINE2
+    interfaces:
+    - name: Ethernet1
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet1 - P2P_CA1-LEAF1A_Ethernet2 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-SPINE2
+    interfaces:
+    - name: Ethernet2
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet2 - P2P_CA1-LEAF1B_Ethernet2 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-SPINE2
+    interfaces:
+    - name: Loopback0
+      status: up
+    result_overwrite:
+      custom_field: Interface Loopback0 - ROUTER_ID = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Ethernet7
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet7 - MLAG_CA1-LEAF1B_Ethernet7 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Ethernet8
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet8 - MLAG_CA1-LEAF1B_Ethernet8 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Ethernet1
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet1 - P2P_CA1-SPINE1_Ethernet1 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Ethernet2
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet2 - P2P_CA1-SPINE2_Ethernet1 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Ethernet6
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet6 - HOST1 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Ethernet9
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet9 - CSR_Router_Test_Interface = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Port-Channel7
+      status: up
+    result_overwrite:
+      custom_field: Interface Port-Channel7 - MLAG_CA1-LEAF1B_Port-Channel7 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Port-Channel6
+      status: up
+    result_overwrite:
+      custom_field: Interface Port-Channel6 - HOST1_Po1 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Vlan4093
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan4093 - MLAG_L3 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Vlan4094
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan4094 - MLAG = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Vlan110
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan110 - Data = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Vlan111
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan111 - Voice = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Vlan112
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan112 - Guest = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Vlan3100
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan3100 - MLAG_L3_VRF_VRF_TENANT = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Loopback0
+      status: up
+    result_overwrite:
+      custom_field: Interface Loopback0 - ROUTER_ID = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Loopback1
+      status: up
+    result_overwrite:
+      custom_field: Interface Loopback1 - VXLAN_TUNNEL_SOURCE = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Loopback101
+      status: up
+    result_overwrite:
+      custom_field: Interface Loopback101 - DIAG_VRF_VRF_TENANT = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    interfaces:
+    - name: Vxlan1
+      status: up
+    result_overwrite:
+      custom_field: Interface Vxlan1 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Ethernet7
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet7 - MLAG_CA1-LEAF1A_Ethernet7 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Ethernet8
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet8 - MLAG_CA1-LEAF1A_Ethernet8 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Ethernet1
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet1 - P2P_CA1-SPINE1_Ethernet2 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Ethernet2
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet2 - P2P_CA1-SPINE2_Ethernet2 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Ethernet6
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet6 - HOST1 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Ethernet9
+      status: up
+    result_overwrite:
+      custom_field: Interface Ethernet9 - CSR_Router_Test_Interface = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Port-Channel7
+      status: up
+    result_overwrite:
+      custom_field: Interface Port-Channel7 - MLAG_CA1-LEAF1A_Port-Channel7 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Port-Channel6
+      status: up
+    result_overwrite:
+      custom_field: Interface Port-Channel6 - HOST1_Po1 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Vlan4093
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan4093 - MLAG_L3 = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Vlan4094
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan4094 - MLAG = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Vlan110
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan110 - Data = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Vlan111
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan111 - Voice = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Vlan112
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan112 - Guest = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Vlan3100
+      status: up
+    result_overwrite:
+      custom_field: Interface Vlan3100 - MLAG_L3_VRF_VRF_TENANT = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Loopback0
+      status: up
+    result_overwrite:
+      custom_field: Interface Loopback0 - ROUTER_ID = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Loopback1
+      status: up
+    result_overwrite:
+      custom_field: Interface Loopback1 - VXLAN_TUNNEL_SOURCE = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Loopback101
+      status: up
+    result_overwrite:
+      custom_field: Interface Loopback101 - DIAG_VRF_VRF_TENANT = 'up'
+- VerifyInterfacesStatus:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    interfaces:
+    - name: Vxlan1
+      status: up
+    result_overwrite:
+      custom_field: Interface Vxlan1 = 'up'
+anta.tests.routing.bgp:
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: evpn
+      peers:
+      - 10.1.254.5
+    filters:
+      tags:
+      - CA1-SPINE1
+    result_overwrite:
+      custom_field: 'BGP EVPN Peer: CA1-LEAF1A (IP: 10.1.254.5)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: evpn
+      peers:
+      - 10.1.254.6
+    filters:
+      tags:
+      - CA1-SPINE1
+    result_overwrite:
+      custom_field: 'BGP EVPN Peer: CA1-LEAF1B (IP: 10.1.254.6)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: ipv4
+      peers:
+      - 10.255.255.9
+      safi: unicast
+    filters:
+      tags:
+      - CA1-SPINE1
+    result_overwrite:
+      custom_field: 'BGP IPv4 Unicast Peer: CA1-LEAF1A (IP: 10.255.255.9)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: ipv4
+      peers:
+      - 10.255.255.13
+      safi: unicast
+    filters:
+      tags:
+      - CA1-SPINE1
+    result_overwrite:
+      custom_field: 'BGP IPv4 Unicast Peer: CA1-LEAF1B (IP: 10.255.255.13)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: evpn
+      peers:
+      - 10.1.254.5
+    filters:
+      tags:
+      - CA1-SPINE2
+    result_overwrite:
+      custom_field: 'BGP EVPN Peer: CA1-LEAF1A (IP: 10.1.254.5)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: evpn
+      peers:
+      - 10.1.254.6
+    filters:
+      tags:
+      - CA1-SPINE2
+    result_overwrite:
+      custom_field: 'BGP EVPN Peer: CA1-LEAF1B (IP: 10.1.254.6)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: ipv4
+      peers:
+      - 10.255.255.11
+      safi: unicast
+    filters:
+      tags:
+      - CA1-SPINE2
+    result_overwrite:
+      custom_field: 'BGP IPv4 Unicast Peer: CA1-LEAF1A (IP: 10.255.255.11)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: ipv4
+      peers:
+      - 10.255.255.15
+      safi: unicast
+    filters:
+      tags:
+      - CA1-SPINE2
+    result_overwrite:
+      custom_field: 'BGP IPv4 Unicast Peer: CA1-LEAF1B (IP: 10.255.255.15)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: evpn
+      peers:
+      - 10.1.255.1
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'BGP EVPN Peer: CA1-SPINE1 (IP: 10.1.255.1)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: evpn
+      peers:
+      - 10.1.255.2
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'BGP EVPN Peer: CA1-SPINE2 (IP: 10.1.255.2)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: ipv4
+      peers:
+      - 169.254.1.5
+      safi: unicast
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'BGP IPv4 Unicast Peer: CA1-LEAF1B (IP: 169.254.1.5)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: ipv4
+      peers:
+      - 10.255.255.8
+      safi: unicast
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'BGP IPv4 Unicast Peer: CA1-SPINE1 (IP: 10.255.255.8)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: ipv4
+      peers:
+      - 10.255.255.10
+      safi: unicast
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'BGP IPv4 Unicast Peer: CA1-SPINE2 (IP: 10.255.255.10)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: evpn
+      peers:
+      - 10.1.255.1
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'BGP EVPN Peer: CA1-SPINE1 (IP: 10.1.255.1)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: evpn
+      peers:
+      - 10.1.255.2
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'BGP EVPN Peer: CA1-SPINE2 (IP: 10.1.255.2)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: ipv4
+      peers:
+      - 169.254.1.4
+      safi: unicast
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'BGP IPv4 Unicast Peer: CA1-LEAF1A (IP: 169.254.1.4)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: ipv4
+      peers:
+      - 10.255.255.12
+      safi: unicast
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'BGP IPv4 Unicast Peer: CA1-SPINE1 (IP: 10.255.255.12)'
+- VerifyBGPSpecificPeers:
+    address_families:
+    - afi: ipv4
+      peers:
+      - 10.255.255.14
+      safi: unicast
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'BGP IPv4 Unicast Peer: CA1-SPINE2 (IP: 10.255.255.14)'
+anta.tests.routing.generic:
+- VerifyRoutingProtocolModel:
+    filters:
+      tags:
+      - CA1-SPINE1
+    model: multi-agent
+    result_overwrite:
+      custom_field: 'Routing protocol model: multi-agent'
+- VerifyRoutingProtocolModel:
+    filters:
+      tags:
+      - CA1-SPINE2
+    model: multi-agent
+    result_overwrite:
+      custom_field: 'Routing protocol model: multi-agent'
+- VerifyRoutingProtocolModel:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    model: multi-agent
+    result_overwrite:
+      custom_field: 'Routing protocol model: multi-agent'
+- VerifyRoutingTableEntry:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'Route: 10.1.255.1 - Peer: CA1-SPINE1'
+    routes:
+    - 10.1.255.1
+- VerifyRoutingTableEntry:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'Route: 10.1.255.2 - Peer: CA1-SPINE2'
+    routes:
+    - 10.1.255.2
+- VerifyRoutingTableEntry:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'Route: 10.1.254.5 - Peer: CA1-LEAF1A'
+    routes:
+    - 10.1.254.5
+- VerifyRoutingTableEntry:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'Route: 10.1.254.6 - Peer: CA1-LEAF1B'
+    routes:
+    - 10.1.254.6
+- VerifyRoutingTableEntry:
+    filters:
+      tags:
+      - CA1-LEAF1A
+    result_overwrite:
+      custom_field: 'Route: 10.1.253.5 - Peer: CA1-LEAF1A'
+    routes:
+    - 10.1.253.5
+- VerifyRoutingProtocolModel:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    model: multi-agent
+    result_overwrite:
+      custom_field: 'Routing protocol model: multi-agent'
+- VerifyRoutingTableEntry:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'Route: 10.1.255.1 - Peer: CA1-SPINE1'
+    routes:
+    - 10.1.255.1
+- VerifyRoutingTableEntry:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'Route: 10.1.255.2 - Peer: CA1-SPINE2'
+    routes:
+    - 10.1.255.2
+- VerifyRoutingTableEntry:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'Route: 10.1.254.5 - Peer: CA1-LEAF1A'
+    routes:
+    - 10.1.254.5
+- VerifyRoutingTableEntry:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'Route: 10.1.254.6 - Peer: CA1-LEAF1B'
+    routes:
+    - 10.1.254.6
+- VerifyRoutingTableEntry:
+    filters:
+      tags:
+      - CA1-LEAF1B
+    result_overwrite:
+      custom_field: 'Route: 10.1.253.5 - Peer: CA1-LEAF1A'
+    routes:
+    - 10.1.253.5

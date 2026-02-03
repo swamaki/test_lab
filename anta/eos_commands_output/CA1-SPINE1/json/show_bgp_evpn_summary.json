@@ -1,0 +1,67 @@
+{
+  "vrfs": {
+    "default": {
+      "vrf": "default",
+      "routerId": "10.1.255.1",
+      "asn": "65100",
+      "peers": {
+        "10.1.254.5": {
+          "description": "CA1-LEAF1A_Loopback0",
+          "version": 4,
+          "msgReceived": 163,
+          "msgSent": 173,
+          "inMsgQueue": 0,
+          "outMsgQueue": 0,
+          "asn": "65103",
+          "prefixAccepted": 11,
+          "prefixReceived": 11,
+          "upDownTime": 1748903444.098724,
+          "underMaintenance": false,
+          "peerState": "Established"
+        },
+        "10.1.254.6": {
+          "description": "CA1-LEAF1B_Loopback0",
+          "version": 4,
+          "msgReceived": 158,
+          "msgSent": 173,
+          "inMsgQueue": 0,
+          "outMsgQueue": 0,
+          "asn": "65103",
+          "prefixAccepted": 11,
+          "prefixReceived": 11,
+          "upDownTime": 1748903445.056047,
+          "underMaintenance": false,
+          "peerState": "Established"
+        },
+        "10.1.254.7": {
+          "description": "CA1-LEAF2A_Loopback0",
+          "version": 4,
+          "msgReceived": 159,
+          "msgSent": 143,
+          "inMsgQueue": 0,
+          "outMsgQueue": 0,
+          "asn": "65105",
+          "prefixAccepted": 46,
+          "prefixReceived": 46,
+          "upDownTime": 1748903444.140624,
+          "underMaintenance": false,
+          "peerState": "Established"
+        },
+        "10.1.254.8": {
+          "description": "CA1-LEAF2B_Loopback0",
+          "version": 4,
+          "msgReceived": 153,
+          "msgSent": 160,
+          "inMsgQueue": 0,
+          "outMsgQueue": 0,
+          "asn": "65105",
+          "prefixAccepted": 46,
+          "prefixReceived": 46,
+          "upDownTime": 1748903445.05166,
+          "underMaintenance": false,
+          "peerState": "Established"
+        }
+      }
+    }
+  }
+}

@@ -20,7 +20,7 @@
 | FABRIC | l2leaf | CA1-LEAF1A | 192.168.223.101/24 | vEOS-lab | Provisioned | SN-CA1-LEAF1A |
 | FABRIC | l2leaf | CA1-LEAF1B | 192.168.223.102/24 | vEOS-lab | Provisioned | SN-CA1-LEAF1B |
 | FABRIC | l3spine | CA1-SPINE1 | 192.168.223.11/24 | vEOS-lab | Provisioned | SN-CA1-SPINE1 |
-| FABRIC | l3spine | CA1-SPINE2 | 192.168.223.12/24 | vEOS-lab | Provisioned | SN-CA1-SPINE1 |
+| FABRIC | l3spine | CA1-SPINE2 | 192.168.223.12/24 | vEOS-lab | Provisioned | SN-CA1-SPINE2 |
 
 > Provision status is based on Ansible inventory declaration and do not represent real status from CloudVision.
 

@@ -12,7 +12,12 @@ aliases: "alias siib show ip interface brief\nalias cc clear counters\nalias cp 
   counter rate | nz\nalias shrte show ip route\nalias showcon show interfaces status | grep connected    \nalias sa show active \nalias
   clrcounters clear counters\nalias wrtme write mem\nalias spc show port-channel %1 detail all   \nalias ports show int sta | grep \"connected\\|
   disabled\" \nalias shmc show int | awk '/^[A-Z]/ { intf = $1 } /, address is/ { print intf, $6 }'\nalias term_logs sh agent TerminAttr
-  logs | tail\nalias spcd show port-channel dense\n"
+  logs | tail\nalias spcd show port-channel dense\nalias sgr show mpls segment-routing bindings\nalias sbv show bgp vpn-ipv4 summary
+  \nalias sbe show bgp evpn summary\nalias ping1 bash /mnt/flash/ping_scripts/ping1.sh\nalias ping2 bash /mnt/flash/ping_scripts/ping2.sh\nalias
+  ping3 bash /mnt/flash/ping_scripts/ping3.sh\nalias rates show int eth1-8 counters rates\nalias ztpreset\n  10 delete flash:zerotouch-config\n
+  \ 20 write erase\n  30 reload now\n!\n"
+clock:
+  timezone: US/Eastern
 config_end: true
 daemon_terminattr:
   cvaddrs:
@@ -20,7 +25,6 @@ daemon_terminattr:
   cvauth:
     method: token-secure
     token_file: /tmp/cv-onboarding-token
-  cvsourceintf: Management0
   cvvrf: MGMT
   disable_aaa: true
   ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
@@ -73,8 +77,6 @@ ethernet_interfaces:
   peer: CA1-LEAF1B
   peer_interface: Ethernet2
   peer_type: l2leaf
-- name: Ethernet10
-  description: Device Specific config
 hostname: CA1-SPINE2
 ip_igmp_snooping:
   globally_enabled: true
@@ -122,6 +124,51 @@ metadata:
   is_deployed: true
   platform: vEOS-lab
   fabric_name: FABRIC
+  cv_tags:
+    device_tags:
+    - name: topology_hint_fabric
+      value: FABRIC
+    - name: topology_hint_type
+      value: spine
+    - name: topology_hint_rack
+      value: CA1_SPINES
+    - name: AVD-CA-POD
+      value: Campus1
+    - name: AVD-ACC-POD
+      value: MDF
+    - name: AVD-BGP-ASN
+      value: '65100'
+    - name: AVD-BGP-ROUTERID
+      value: 10.1.255.2
+    - name: AVD-VTEP
+      value: 'False'
+    - name: AVD-MLAG-PEERLINK
+      value: Port-Channel7
+    - name: AVD-MLAG-TIMERS
+      value: MLAG-TIMERS
+    - name: AVD-LEAF-ALIGN
+      value: LEFT
+    - name: AVD-ACC-POD
+      value: IDF1
+    - name: AVD-NODE-ID
+      value: '3'
+    interface_tags:
+    - interface: Ethernet1
+      tags:
+      - name: Circuit
+        value: 'True'
+      - name: Vendor
+        value: Verizon
+      - name: CircuitID
+        value: VZ-000101
+    - interface: Ethernet2
+      tags:
+      - name: Circuit
+        value: 'True'
+      - name: Vendor
+        value: Verizon
+      - name: CircuitID
+        value: VZ-000102
 mlag_configuration:
   domain_id: CA1_SPINES
   local_interface: Vlan4094
@@ -209,7 +256,7 @@ router_bgp:
       activate: true
     - name: IPv4-UNDERLAY-PEERS
       activate: true
-serial_number: SN-CA1-SPINE1
+serial_number: SN-CA1-SPINE2
 service_routing_protocols_model: multi-agent
 sflow:
   sample: 1000

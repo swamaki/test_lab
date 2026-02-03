@@ -5,6 +5,7 @@
 - [Management](#management)
   - [Management Interfaces](#management-interfaces)
   - [IP Name Servers](#ip-name-servers)
+  - [Clock Settings](#clock-settings)
   - [NTP](#ntp)
   - [Management API HTTP](#management-api-http)
 - [Authentication](#authentication)
@@ -91,6 +92,19 @@ interface Management0
 ```eos
 ip name-server vrf MGMT 1.1.1.1
 ip name-server vrf MGMT 8.8.8.8
+```
+
+### Clock Settings
+
+#### Clock Timezone Settings
+
+Clock Timezone is set to **US/Eastern**.
+
+#### Clock Device Configuration
+
+```eos
+!
+clock timezone US/Eastern
 ```
 
 ### NTP
@@ -218,6 +232,18 @@ alias ports show int sta | grep "connected\| disabled"
 alias shmc show int | awk '/^[A-Z]/ { intf = $1 } /, address is/ { print intf, $6 }'
 alias term_logs sh agent TerminAttr logs | tail
 alias spcd show port-channel dense
+alias sgr show mpls segment-routing bindings
+alias sbv show bgp vpn-ipv4 summary 
+alias sbe show bgp evpn summary
+alias ping1 bash /mnt/flash/ping_scripts/ping1.sh
+alias ping2 bash /mnt/flash/ping_scripts/ping2.sh
+alias ping3 bash /mnt/flash/ping_scripts/ping3.sh
+alias rates show int eth1-8 counters rates
+alias ztpreset
+  10 delete flash:zerotouch-config
+  20 write erase
+  30 reload now
+!
 
 !
 ```
@@ -237,7 +263,7 @@ alias spcd show port-channel dense
 ```eos
 !
 daemon TerminAttr
-   exec /usr/bin/TerminAttr -cvaddr=apiserver.cv-staging.corp.arista.io:443 -cvauth=token-secure,/tmp/cv-onboarding-token -cvvrf=MGMT -disableaaa -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs -cvsourceintf=Management0
+   exec /usr/bin/TerminAttr -cvaddr=apiserver.cv-staging.corp.arista.io:443 -cvauth=token-secure,/tmp/cv-onboarding-token -cvvrf=MGMT -disableaaa -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs
    no shutdown
 ```
 
@@ -456,10 +482,10 @@ vlan 4094
 | --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
 | Ethernet1 | L2_CA1-SPINE1_Ethernet2 | *trunk | *110-112,1000 | *- | *- | 1 |
 | Ethernet2 | L2_CA1-SPINE2_Ethernet2 | *trunk | *110-112,1000 | *- | *- | 1 |
-| Ethernet6 | HOST1 | *access | *110 | *- | *- | 6 |
+| Ethernet6 | HOST1_Po1 | *access | *110 | *- | *- | 6 |
 | Ethernet7 | MLAG_CA1-LEAF1A_Ethernet7 | *trunk | *- | *- | *MLAG | 7 |
 | Ethernet8 | MLAG_CA1-LEAF1A_Ethernet8 | *trunk | *- | *- | *MLAG | 7 |
-| Ethernet9 | CSR_Router_Test_Interface | access | 112 | - | - | - |
+| Ethernet9 | CSR_Router_Test_Interface | access | 111 | - | - | - |
 
 *Inherited from Port-Channel Interface
 
@@ -478,7 +504,7 @@ interface Ethernet2
    channel-group 1 mode active
 !
 interface Ethernet6
-   description HOST1
+   description HOST1_Po1
    no shutdown
    channel-group 6 mode active
 !
@@ -495,13 +521,10 @@ interface Ethernet8
 interface Ethernet9
    description CSR_Router_Test_Interface
    no shutdown
-   switchport access vlan 112
+   switchport access vlan 111
    switchport mode access
    switchport
    spanning-tree portfast
-!
-interface Ethernet10
-   description Device Specific config
 ```
 
 ### Port-Channel Interfaces

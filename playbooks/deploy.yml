@@ -75,7 +75,7 @@
         name: arista.avd.cv_deploy
       vars:
         cv_server: www.cv-staging.corp.arista.io
-        cv_token: "{{lookup('file', '../../cv/cvaas.tok')}}"
+        cv_token: "{{lookup('file', '../cv/cvaas.tok')}}"
         cv_verify_certs: true
         cv_configlet_name_template: "AVD_${hostname}"
         # cv_run_change_control: true
@@ -92,7 +92,7 @@
         name: arista.avd.cv_deploy
       vars:
         cv_server: www.cv-staging.corp.arista.io
-        cv_token: "{{lookup('file', '../../cv/cvaas.tok')}}"
+        cv_token: "{{lookup('file', '../cv/cvaas.tok')}}"
         cv_verify_certs: true
         cv_configlet_name_template: "AVD_${hostname}"
         # cv_run_change_control: true
@@ -105,7 +105,7 @@
         name: arista.avd.cv_deploy
       vars:
         cv_server: www.cv-staging.corp.arista.io
-        cv_token: "{{lookup('file', '../../cv/cvaas-labs-svc.tok')}}"
+        cv_token: "{{lookup('file', '../cv/cvaas-labs-svc.tok')}}"
         cv_verify_certs: true
         cv_configlet_name_template: "AVD_${hostname}"
         # cv_run_change_control: true
@@ -118,7 +118,7 @@
         name: arista.avd.cv_deploy
       vars:
         cv_server: 10.18.144.223
-        cv_token: "{{lookup('file', '../../cv/cv-act.tok')}}"
+        cv_token: "{{lookup('file', '../cv/cv-act.tok')}}"
         cv_verify_certs: false
         cv_configlet_name_template: "AVD_${hostname}"
         # cv_run_change_control: true

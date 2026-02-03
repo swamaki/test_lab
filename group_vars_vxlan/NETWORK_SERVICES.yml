@@ -1,0 +1,72 @@
+---
+### group_vars/NETWORK_SERVICES.yml
+
+
+tenants:
+  # Definition of tenants. Additional level of abstraction to VRFs
+  - name: TENANT1
+    mac_vrf_vni_base: 10000
+    l2vlans:
+      # These are pure L2 vlans. They do not have a SVI defined in the l3leafs and they will be bridged inside the vxlan fabric
+      - id: 3401
+        name: L2_VLAN3401
+        tags: ["3401"]
+      - id: 3402
+        name: L2_VLAN3402
+        tags: ["3402"]
+    # VRF "default" is partially supported under network-services. Currently the supported options for "default" vrf are route-target,
+    # route-distinguisher settings, structured_config, raw_eos_cli in bgp and SVIs are the only supported interface type.
+    # Vlan-aware-bundles are supported as well inside default vrf. OSPF is not supported currently.
+    vrfs:
+      - name: VRF_TENANT
+        vrf_vni: 101
+        vtep_diagnostic:
+          loopback: 101
+          loopback_ip_range: 10.1.101.0/24
+        svis:
+          - id: 110
+            name: 'Data'
+            tags: ["110"]
+            enabled: true
+            ip_address_virtual: 10.1.10.1/24
+            ip_helpers:
+              - ip_helper: 10.0.0.1
+                source_interface: Loopback101
+                source_vrf: VRF_TENANT
+          - id: 111
+            name: 'Voice'
+            tags: ["111"]
+            enabled: true
+            ip_address_virtual: 10.1.11.1/24
+            ip_helpers:
+              - ip_helper: 10.0.0.1
+                source_interface: Loopback101
+                source_vrf: VRF_TENANT
+          - id: 112
+            name: 'Guest'
+            tags: ["112"]
+            enabled: true
+            ip_address_virtual: 10.1.12.1/24
+            ip_helpers:
+              - ip_helper: 10.0.0.1
+                source_interface: Loopback101
+                source_vrf: VRF_TENANT
+        bgp_peers:
+          - ip_address: 10.0.0.8
+            remote_as: 65000
+            peer_group: IPv4-UNDERLAY-PEERS
+            description: CORE_Ethernet4
+            nodes:
+              - CA1-LEAF2A
+          - ip_address: 10.0.0.10
+            remote_as: 65000
+            peer_group: IPv4-UNDERLAY-PEERS
+            description: CORE_Ethernet5
+            nodes:
+              - CA1-LEAF2B
+          - ip_address: 10.0.0.12
+            remote_as: 65000
+            peer_group: IPv4-UNDERLAY-PEERS
+            description: CORE_Ethernet6
+            nodes:
+              - CA2-LEAF2A

@@ -53,6 +53,18 @@ csc_aliases: |
   alias shmc show int | awk '/^[A-Z]/ { intf = $1 } /, address is/ { print intf, $6 }'
   alias term_logs sh agent TerminAttr logs | tail
   alias spcd show port-channel dense
+  alias sgr show mpls segment-routing bindings
+  alias sbv show bgp vpn-ipv4 summary 
+  alias sbe show bgp evpn summary
+  alias ping1 bash /mnt/flash/ping_scripts/ping1.sh
+  alias ping2 bash /mnt/flash/ping_scripts/ping2.sh
+  alias ping3 bash /mnt/flash/ping_scripts/ping3.sh
+  alias rates show int eth1-8 counters rates
+  alias ztpreset
+    10 delete flash:zerotouch-config
+    20 write erase
+    30 reload now
+  !
 
 # BGP defaults
 bgp_default_ipv4_unicast: false
@@ -76,6 +88,9 @@ bgp_peer_groups:
   mlag_ipv4_underlay_peer:
     password: 4b21pAdCvWeAqpcKDFMdWw==
 
+csc_clock:
+  timezone: "US/Eastern"
+
 # EVENG Labs
 cv_settings:
   cvaas:
@@ -83,7 +98,7 @@ cv_settings:
     clusters:
       - name: cvaas
         region: staging
-        vrf: use_mgmt_interface_vrf
+        vrf: MGMT
         token_file: /tmp/cv-onboarding-token
   terminattr:
     ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
@@ -97,7 +112,7 @@ cv_settings:
 #       servers:
 #         - name: 192.168.222.2
 #           port: 9910
-#       vrf: use_mgmt_interface_vrf
+#       vrf: MGMT
 #       token_file: /tmp/token
 #   terminattr:
 #     ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
